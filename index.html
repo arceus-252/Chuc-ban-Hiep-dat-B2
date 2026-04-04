@@ -6,19 +6,53 @@
     <title>Trang chủ tài liệu ôn tập</title>
     <meta property="og:title" content="B2 thẳng tiến đê 🚀">
     <style>
-        /* Font chữ nhìn cho hiện đại */
-        body {font-family: Arial, sans-serif;
-             line-height: 1.6;
-             padding: 10px;}
-        /* ĐÂY LÀ CHỖ CHỈNH 10PX*/
-    li {margin-bottom: 10px;}
-        /* Làm cho các đường link nhìn đẹp hơn */
-    a {text-decoration: none;
-       color: #0066cc;
-       font-weight: bold;}
-    a:hover {color: #ff5722; /* Khi di chuột vào link sẽ đổi màu cam */text-decoration: underline;}
-    </ul>
-    </style>
+    /* Tổng thể trang web */
+    body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          line-height: 1.6;
+          margin: 0;
+          padding: 40px 20px;
+          background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Nền gradient nhẹ nhàng */
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;}
+    /* Container chính để gom nội dung vào giữa */
+    .container {max-width: 800px;
+                width: 100%;
+                background: white;
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);}
+      h1 {color: #2c3e50;
+          text-align: center;
+          border-bottom: 2px solid #3498db;
+          padding-bottom: 10px;}
+      h2 {color: #2980b9;
+          margin-top: 30px;
+          display: flex;
+          align-items: center;}
+      h2::before { content: '📚'; /* Thêm icon cho sinh động */  margin-right: 10px;}
+    /* Tùy chỉnh danh sách */
+    ul {list-style: none; padding: 0;}
+    li {margin-bottom: 12px;}
+    /* Biến các đường link thành các "nút" (Buttons) */
+    a { text-decoration: none;
+        color: #34495e;
+        background: #f8f9fa;
+        padding: 12px 20px;
+        display: block;
+        border-radius: 8px;
+        border-left: 5px solid #3498db;
+        transition: all 0.3s ease;
+        font-weight: 500;}
+    a:hover {background: #3498db;
+             color: white;
+             transform: translateX(10px); /* Hiệu ứng lướt sang phải khi di chuột */
+             box-shadow: 0 4px 8px rgba(0,0,0,0.1);}
+    p { text-align: center;
+        color: #7f8c8d;
+        font-style: italic;}
+</style>
 </head>
 <body>
 
