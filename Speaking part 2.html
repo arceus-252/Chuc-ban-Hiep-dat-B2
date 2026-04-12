@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aptis Speaking Part 2 Practice - Target B1</title>
+    <title>Aptis Speaking Part 2 Practice - Target B2</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; line-height: 1.6; padding: 15px; }
-       #loginScreen {max-width: 400px;
-                     margin: 100px auto;
-                     background: white;
-                     padding: 30px;
-                     border-radius: 12px;
-                     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                     text-align: center;}
-        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);display: none; }
+        #loginScreen {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        /* Sửa ở đây: Mặc định ẩn giao diện chính đi */
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; }
         h2, h3 { color: #2c3e50; text-align: center; margin-bottom: 5px; }
         .subtitle { text-align: center; color: #666; margin-bottom: 20px; font-size: 14px; }
         
@@ -46,7 +49,6 @@
         
         #transcript-box { border: 1px solid #ced4da; padding: 15px; min-height: 120px; background-color: #e9ecef; border-radius: 5px; margin-bottom: 20px; font-size: 16px; }
         #result-box { margin-top: 20px; padding: 20px; border: 1px solid #b8daff; background-color: #cce5ff; border-radius: 5px; display: none; font-size: 15px;}
-        /* Sửa lại CSS hiển thị markdown trong result-box */
         #result-box p { margin-bottom: 10px; }
         #result-box ul, #result-box ol { margin-bottom: 10px; padding-left: 20px; }
         #result-box strong { color: #0056b3; }
@@ -60,10 +62,11 @@
         <h2>🔒 Nhập mật khẩu</h2>
         <p>Nhập pass bên dưới hoặc là bị kick</p>
         <input type="password" id="matKhauInput" placeholder="Nhập mật khẩu vào đây...">
-        <button onclick="kiemTraMatKhau()">Vào test</button>
+        <button class="btn btn-primary" onclick="kiemTraMatKhau()">Vào test</button>
         <p id="loiMatKhau" style="color: red; display: none; margin-top: 10px;">Sai mật khẩu rồi lêu lêu ahihi 😛</p>
     </div>
-<div class="container">
+
+<div class="container" id="mainApp">
     <h2>Luyện Thi Aptis Speaking - Part 2</h2>
     <div class="subtitle">Mục tiêu: Cố được B2 | Thời gian nói: 45s</div>
 
@@ -110,28 +113,29 @@
 </div>
 
 <script>
-           // --- 1. XỬ LÝ ĐĂNG NHẬP ---
-        const matKhauDung = "Bsi Hiep B2 Aptis"; 
-        
-        function kiemTraMatKhau() {
-            const nhapVao = document.getElementById('matKhauInput').value;
-            if (nhapVao === matKhauDung) {
-                document.getElementById('loginScreen').style.display = "none";
-                document.getElementById('mainApp').style.display = "block";
-                batDauDemGio(); // Chỉ bắt đầu đếm giờ khi đã vào trong
-            } else {
-                document.getElementById('loiMatKhau').style.display = "block";
-            }
+    // --- 1. XỬ LÝ ĐĂNG NHẬP ---
+    const matKhauDung = "Bsi Hiep B2 Aptis"; 
+    
+    function kiemTraMatKhau() {
+        const nhapVao = document.getElementById('matKhauInput').value;
+        if (nhapVao === matKhauDung) {
+            document.getElementById('loginScreen').style.display = "none";
+            document.getElementById('mainApp').style.display = "block";
+            // Đã xóa hàm batDauDemGio() gây lỗi ở đây
+        } else {
+            document.getElementById('loiMatKhau').style.display = "block";
         }
+    }
 
-        // Bắt sự kiện ấn Enter để đăng nhập
-        document.getElementById("matKhauInput").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                kiemTraMatKhau();
-            }
-        });
+    // Bắt sự kiện ấn Enter để đăng nhập
+    document.getElementById("matKhauInput").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            kiemTraMatKhau();
+        }
+    });
 
+    // --- 2. XỬ LÝ API VÀ THU ÂM ---
     const apiKeyInput = document.getElementById('api-key');
     if (localStorage.getItem('gemini_api_key')) {
         apiKeyInput.value = localStorage.getItem('gemini_api_key');
@@ -157,7 +161,7 @@
     let finalTranscript = '';
     let timerInterval;
     let timeLeft = 45; 
-    let isStoppedManually = false; // Biến cờ xử lý lỗi ngắt Micro sớm trên iOS/Safari
+    let isStoppedManually = false;
 
     const question1 = document.getElementById('q1').innerText;
     const question2 = document.getElementById('q2').innerText;
@@ -175,7 +179,7 @@
             btnRecord.disabled = true;
             btnStop.disabled = false;
             btnSubmit.disabled = true;
-            // Chỉ reset text và timer nếu đây là lần bấm Bắt đầu (không phải auto-restart)
+            
             if (timeLeft === 45) {
                 transcriptBox.innerHTML = '';
                 finalTranscript = '';
@@ -191,7 +195,7 @@
                     }
 
                     if (timeLeft <= 0) {
-                        isStoppedManually = true; // Hết giờ, ép dừng
+                        isStoppedManually = true;
                         recognition.stop(); 
                     }
                 }, 1000);
@@ -212,7 +216,6 @@
 
         recognition.onerror = function(event) {
             console.error("Lỗi Micro: ", event.error);
-            // Bỏ qua lỗi no-speech vì nó thường xuyên xảy ra trên iOS khi ngập ngừng
             if (event.error !== 'no-speech') {
                 alert("Lỗi Micro: " + event.error + ". Hãy chắc chắn bạn đã cấp quyền Micro.");
                 clearInterval(timerInterval);
@@ -223,7 +226,6 @@
         };
 
         recognition.onend = function() {
-            // FIX LỖI IOS/SAFARI: Nếu chưa hết giờ và không phải do người dùng tự bấm "Nộp sớm" -> Tự động bật lại micro
             if (timeLeft > 0 && !isStoppedManually) {
                 try {
                     recognition.start();
@@ -231,7 +233,6 @@
                     console.log("Không thể tự động khởi động lại micro.");
                 }
             } else {
-                // Kết thúc thực sự (Hết giờ hoặc bấm Nộp sớm)
                 clearInterval(timerInterval);
                 timerDisplay.style.color = "#dc3545";
                 btnRecord.disabled = false;
@@ -244,7 +245,7 @@
 
         btnRecord.addEventListener('click', () => { 
             isStoppedManually = false;
-            timeLeft = 45; // Reset thời gian
+            timeLeft = 45;
             try {
                 recognition.start(); 
             } catch(e) {
@@ -277,10 +278,9 @@
         loadingDiv.style.display = 'block';
         resultBox.style.display = 'none';
 
-        // Đã sửa lại cấu trúc Prompt rõ ràng hơn
         const promptText = `
 Bạn là một giám khảo tiếng Anh chuyên nghiệp chấm thi chứng chỉ Aptis. 
-Học viên đang thi Part 2 (Thời gian nói 45s). Mục tiêu của học viên là đạt Band B1.
+Học viên đang thi Part 2 (Thời gian nói 45s). Mục tiêu của học viên là đạt Band B2.
 
 Đề bài học viên nhận được:
 ${question1}
@@ -294,11 +294,10 @@ Hãy nhận xét bằng TIẾNG VIỆT thật ngắn gọn, súc tích, trình b
 1. **Đánh giá chung:** Câu trả lời này có trả lời đủ 3 câu hỏi không? Đạt khoảng band điểm nào (A1, A2, B1, B2 hay C1)?
 2. **Điểm tốt:** Liệt kê các từ vựng hoặc cấu trúc câu tốt.
 3. **Lỗi cần sửa & Cách khắc phục:** Chỉ ra lỗi sai ngữ pháp/từ vựng (nếu có) và cách nói tự nhiên hơn.
-4. **Bài mẫu tham khảo (Band B1):** Cung cấp một bài nói mẫu trong khoảng 100-120 từ để học viên tham khảo.
+4. **Bài mẫu tham khảo (Band B2):** Cung cấp một bài nói mẫu trong khoảng 120-140 từ để học viên tham khảo.
         `;
 
         try {
-            // Giữ nguyên bản gemini-3-flash-preview theo yêu cầu
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -313,7 +312,6 @@ Hãy nhận xét bằng TIẾNG VIỆT thật ngắn gọn, súc tích, trình b
                 resultBox.innerHTML = `<span style="color: red;">Lỗi từ API: ${data.error.message}</span>`;
             } else {
                 let feedback = data.candidates[0].content.parts[0].text;
-                // Sử dụng thư viện Marked.js để render chuẩn xác
                 resultBox.innerHTML = `<h3 style="color:#0056b3; margin-top:0; text-align: center;">📝 NHẬN XÉT CỦA AI</h3><hr>${marked.parse(feedback)}`;
             }
         } catch (error) {
