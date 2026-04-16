@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APTIS Listening - Câu 14 (Chỉ để tham khảo)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .controls {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 80%;
+            max-width: 400px;
+        }
+        .drag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            min-height: 60px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 8px;
+            border: 2px dashed #adb5bd;
+        }
+        .draggable {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: grab;
+            user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-size: 14px;
+        }
+        .draggable:active {
+            cursor: grabbing;
+        }
+        .speakers-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .speaker-row {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+        .speaker-label {
+            font-weight: bold;
+            width: 100px;
+            color: #495057;
+        }
+        .dropzone {
+            flex-grow: 1;
+            min-height: 45px;
+            background: #fff;
+            border: 2px dashed #ced4da;
+            border-radius: 4px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        .dropzone.hover {
+            background-color: #e3f2fd;
+            border-color: #3498db;
+        }
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #2ecc71;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #27ae60;
+        }
+        #result {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .correct { color: #2ecc71; }
+        .incorrect { color: #e74c3c; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Ôn thi APTIS Listening - Câu 14 (Drag & Drop)</h1>
+    
+    <div class="controls">
+        <label for="topicSelect"><strong>Chọn Topic:</strong></label><br><br>
+        <select id="topicSelect" onchange="loadTopic()">
+            </select>
+    </div>
+
+    <div>
+        <h3>Kéo các câu trả lời dưới đây:</h3>
+        <div class="drag-container" id="optionsContainer" ondrop="drop(event)" ondragover="allowDrop(event)">
+            </div>
+    </div>
+
+    <div>
+        <h3>Thả vào đúng Speaker:</h3>
+        <div class="speakers-container">
+            <div class="speaker-row">
+                <div class="speaker-label">Speaker A</div>
+                <div class="dropzone" id="dropA" data-speaker="A" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+            <div class="speaker-row">
+                <div class="speaker-label">Speaker B</div>
+                <div class="dropzone" id="dropB" data-speaker="B" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+            <div class="speaker-row">
+                <div class="speaker-label">Speaker C</div>
+                <div class="dropzone" id="dropC" data-speaker="C" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+            <div class="speaker-row">
+                <div class="speaker-label">Speaker D</div>
+                <div class="dropzone" id="dropD" data-speaker="D" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button onclick="checkAnswers()">Kiểm tra kết quả</button>
+        <div id="result"></div>
+    </div>
+</div>
+
+<script>
+    // Dữ liệu trích xuất từ bảng ảnh của bạn
+    const aptisData = {
+        "Prefer to study": {
+            "A": "at various places",
+            "B": "in a quiet place",
+            "C": "with music",
+            "D": "late at night"
+        },
+        "Protect the environment by": {
+            "A": "Using less electricity.",
+            "B": "Not driving to work.",
+            "C": "Shopping online.",
+            "D": "Using less water."
+        },
+        "Exercise": {
+            "A": "find exercise tiring",
+            "B": "have fun exercising with others",
+            "C": "hate exercise",
+            "D": "exercise to improve work performance"
+        },
+        "Shopping online": {
+            "A": "products are delivered",
+            "B": "it is cheaper",
+            "C": "it saves time",
+            "D": "more choice"
+        },
+        "Studying": {
+            "A": "prefers studying at home",
+            "B": "... in a coffee shop",
+            "C": "... in the park",
+            "D": "...on a public transport"
+        },
+        "Does art": {
+            "A": "As a social activity",
+            "B": "with the children",
+            "C": "as part of their jobs",
+            "D": "alone"
+        },
+        "Outdoor activities": {
+            "A": "walking",
+            "B": "horse riding",
+            "C": "mountain biking",
+            "D": "hiking"
+        },
+        "Use the Internet": {
+            "A": "watch films",
+            "B": "communicate with friends",
+            "C": "complete school assignments",
+            "D": "find transport information"
+        },
+        "Listening to music": {
+            "A": "likes listening to music after waking up",
+            "B": "likes listening to music while studying",
+            "C": "likes listening to music while singing",
+            "D": "likes listening to music to relax"
+        },
+        "Their journey to work": {
+            "A": "Walk with friends",
+            "B": "Go by bus",
+            "C": "Walk alone",
+            "D": "Drive car"
+        },
+        "Protect the environment (2) - hay ra cái này hơn": {
+            "A": "give away used items",
+            "B": "buy environmentally friendly products",
+            "C": "reuse containers for storing food",
+            "D": "not buy commercial cleaning products"
+        },
+        "Running": {
+            "A": "prefer running in the street",
+            "B": "... at the seaside",
+            "C": "... on the running track",
+            "D": "... in th fitness centre"
+        }
+    };
+
+    let currentAnswers = {};
+
+    // Khởi tạo trang
+    window.onload = function() {
+        const select = document.getElementById("topicSelect");
+        for (let topic in aptisData) {
+            let option = document.createElement("option");
+            option.value = topic;
+            option.textContent = topic;
+            select.appendChild(option);
+        }
+        loadTopic();
+    };
+
+    // Hàm trộn mảng (Fisher-Yates Shuffle)
+    function shuffle(array) {
+        let currentIndex = array.length, randomIndex;
+        while (currentIndex != 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+    // Tải dữ liệu topic và xáo trộn câu trả lời
+    function loadTopic() {
+        const topic = document.getElementById("topicSelect").value;
+        currentAnswers = aptisData[topic];
+        const optionsContainer = document.getElementById("optionsContainer");
+        
+        // Làm sạch giao diện cũ
+        optionsContainer.innerHTML = '';
+        document.getElementById("dropA").innerHTML = '';
+        document.getElementById("dropB").innerHTML = '';
+        document.getElementById("dropC").innerHTML = '';
+        document.getElementById("dropD").innerHTML = '';
+        document.getElementById("result").innerHTML = '';
+
+        // Tạo mảng đáp án để xáo trộn
+        let answersArray = [];
+        for (let key in currentAnswers) {
+            answersArray.push({ speaker: key, text: currentAnswers[key] });
+        }
+        
+        shuffle(answersArray);
+
+        // Render các cục có thể kéo thả
+        answersArray.forEach((item, index) => {
+            let div = document.createElement("div");
+            div.className = "draggable";
+            div.draggable = true;
+            div.id = "drag" + index;
+            div.dataset.correct = item.speaker; // Lưu đáp án đúng ngầm ở đây
+            div.textContent = item.text;
+            div.ondragstart = drag;
+            optionsContainer.appendChild(div);
+        });
+    }
+
+    // CÁC HÀM DRAG & DROP HTML5
+    function allowDrop(ev) {
+        ev.preventDefault();
+        if(ev.target.classList.contains("dropzone")) {
+            ev.target.classList.add("hover");
+        }
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        
+        // Bỏ hiệu ứng hover
+        document.querySelectorAll(".dropzone").forEach(el => el.classList.remove("hover"));
+
+        let data = ev.dataTransfer.getData("text");
+        let draggedElement = document.getElementById(data);
+        
+        // Nếu thả vào 1 dropzone
+        if (ev.target.classList.contains("dropzone")) {
+            // Nếu ô đó đã có 1 câu trả lời, đẩy câu cũ về lại optionsContainer
+            if (ev.target.children.length > 0) {
+                document.getElementById("optionsContainer").appendChild(ev.target.children[0]);
+            }
+            ev.target.appendChild(draggedElement);
+        } 
+        // Nếu kéo thả ngược về vùng chứa ban đầu
+        else if (ev.target.id === "optionsContainer" || ev.target.closest("#optionsContainer")) {
+            document.getElementById("optionsContainer").appendChild(draggedElement);
+        }
+    }
+
+    // Gỡ hiệu ứng khi kéo ra ngoài
+    document.addEventListener("dragover", function(event) {
+        document.querySelectorAll(".dropzone").forEach(el => {
+            if(event.target !== el) el.classList.remove("hover");
+        });
+    });
+
+    // Hàm kiểm tra đáp án
+    function checkAnswers() {
+        let correctCount = 0;
+        const zones = ["A", "B", "C", "D"];
+        
+        zones.forEach(zone => {
+            const dropzone = document.getElementById("drop" + zone);
+            dropzone.style.borderColor = "#ced4da"; // Reset màu viền
+            
+            if (dropzone.children.length > 0) {
+                const draggedItem = dropzone.children[0];
+                if (draggedItem.dataset.correct === zone) {
+                    correctCount++;
+                    dropzone.style.borderColor = "#2ecc71"; // Xanh lá nếu đúng
+                } else {
+                    dropzone.style.borderColor = "#e74c3c"; // Đỏ nếu sai
+                }
+            } else {
+                dropzone.style.borderColor = "#e74c3c"; // Đỏ nếu để trống
+            }
+        });
+
+        const resultDiv = document.getElementById("result");
+        if (correctCount === 4) {
+            resultDiv.innerHTML = "<span class='correct'>Đúng hết 4/4.</span>";
+        } else {
+            resultDiv.innerHTML = `<span class='incorrect'>Đúng được có ${correctCount}/4 câu.</span>`;
+        }
+    }
+</script>
+
+</body>
+</html>
