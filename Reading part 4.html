@@ -1,414 +1,737 @@
 <!DOCTYPE html>
+
 <html lang="vi">
+
 <head>
+
     <meta charset="UTF-8">
+
     <title>Luyện thi Aptis Part 4</title>
+
     <style>
+
         body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f4f4; }
+
         
+
         .selector-container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+
         .selector-container label { font-size: 1.2em; font-weight: bold; color: #333; }
+
         select#topic-select { width: 100%; padding: 12px; margin-top: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; cursor: pointer; }
 
+
+
         .topic-wrapper { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 40px; display: none; }
+
         
+
         h2 { border-bottom: 2px solid #2196F3; padding-bottom: 10px; color: #333; }
+
         .reading-section { display: flex; gap: 20px; margin-bottom: 20px; }
+
         .passages { flex: 1; }
+
         
+
         /* Cài đặt bộ đếm cho câu hỏi */
+
         .questions { flex: 1; background: #fffde7; padding: 15px; border-radius: 8px; border: 1px solid #ffe082; counter-reset: question-counter; }
+
         
+
         .passage-box { margin-bottom: 15px; padding: 10px; border-left: 4px solid #2196F3; background: #e3f2fd; }
+
         .mnemonic { font-style: italic; color: #d32f2f; font-size: 0.9em; margin-top: 10px; font-weight: bold; display: none; }
+
         
+
         .toggle-btn { background: #ff9800; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; font-size: 12px; margin-top: 5px; }
+
         .toggle-btn:hover { background: #e68a00; }
 
+
+
         .question-item { margin-bottom: 12px; padding: 8px; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; gap: 10px;}
+
         
+
         /* Tự động đánh số câu hỏi */
+
         .q-text::before { counter-increment: question-counter; content: counter(question-counter) ". "; font-weight: bold; }
+
         .q-text { flex: 1; }
 
+
+
         .wrong { background-color: #ffcdd2 !important; }
+
         .correct { background-color: #c8e6c9 !important; }
+
         
+
         .check-btn { background: #2196F3; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-size: 16px; margin-top: 10px; width: 100%; }
+
         .check-btn:hover { background: #1976D2; }
+
         .result-board { margin-top: 20px; font-weight: bold; font-size: 1.2em; display: none; padding: 15px; border: 2px solid #2196F3; text-align: center; background: white;}
+
     </style>
+
 </head>
+
 <body>
 
+
+
 <div class="selector-container">
+
     <label for="topic-select">Chọn bài đọc:</label>
+
     <select id="topic-select" onchange="changeTopic()">
+
         <option value="topic-1">Topic 1: Music Festival</option>
+
         <option value="topic-2">Topic 2: Childhood Activities</option>
+
         <option value="topic-3">Topic 3: Career</option>
+
         <option value="topic-4">Topic 4: Volunteering</option>
+
         <option value="topic-5">Topic 5: Extreme Sports</option>
+
         <option value="topic-6">Topic 6: Clean local park</option>
+
     </select>
+
 </div>
+
+
 
 <div class="topic-wrapper" id="topic-1">
+
     <h2>Topic 1: Music Festival</h2>
+
     <div class="reading-section">
+
         <div class="passages">
+
             <div class="passage-box">
+
                 <strong>A.</strong> “This is my first…”
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Lễ hội đầu tiên (first) mà thời tiết (weather) đẹp đến ngày cuối cùng (final day)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>B.</strong> “I attend music festivals every year…”
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Tham gia lễ hội (attend music festivals) mà chả ấn tượng gì (not impressed)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>C.</strong> “I don't like one particular kind of music…”
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Tôi ko thích (I don't like) tất cả nhạc (all the music) vì nó đắt (expensive)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>D.</strong> “My band and I went to the music festival..."
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Band nhạc của tôi (My band) đều là những người bạn cũ (old friends) sống trong cùng địa điểm (location)</div>
+
             </div>
+
         </div>
+
         <div class="questions">
+
             <div class="question-item" data-answer="A"><span class="q-text">Who is disappointed with the weather?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="A"><span class="q-text">Who enjoyed the final day of the music event?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="B"><span class="q-text">Who was not impressed by the event overall?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="C"><span class="q-text">Who enjoyed all the music at the music event?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="C"><span class="q-text">Who thought the event was expensive?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="D"><span class="q-text">Who likes meeting old friends?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="D"><span class="q-text">Who thought the location was not good?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <button class="check-btn" onclick="checkAnswers('topic-1')">Kiểm tra kết quả</button>
+
         </div>
+
     </div>
+
     <div class="result-board"></div>
+
 </div>
+
+
 
 <div class="topic-wrapper" id="topic-2">
+
     <h2>Topic 2: Childhood Activities</h2>
+
     <div class="reading-section">
+
         <div class="passages">
+
             <div class="passage-box">
+
                 <strong>A.</strong> "As a child, I played board games..."
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Khi còn trẻ (as a child), trẻ con (children) đều nghĩ đơn giản (simpler)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>B.</strong> "I preferred...."
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Tôi thích những đứa trẻ con (other children) khác</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>C.</strong> "I wasn't able to move much..."
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Tôi ko thể (I wasn't able to) đọc sách vì thích chơi games (modern games)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>D.</strong> "I enjoyed playing outdoors..."
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Tôi thích chơi hoạt động ngoài trời (outdoors), nhưng cx ước (wished) mình có thể giỏi nghệ thuật (arts)</div>
+
             </div>
+
         </div>
+
         <div class="questions">
+
             <div class="question-item" data-answer="A"><span class="q-text">Who enjoyed playing games with their children?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="A"><span class="q-text">Who thought childhood games were much simpler?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="B"><span class="q-text">Who enjoyed playing with other children as a child?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="C"><span class="q-text">Who preferred reading books as a child?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="C"><span class="q-text">Who enjoyed playing modern games?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="D"><span class="q-text">Who enjoyed doing arts as a child?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="D"><span class="q-text">Who wished they could spend more time outdoors?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <button class="check-btn" onclick="checkAnswers('topic-2')">Kiểm tra kết quả</button>
+
         </div>
+
     </div>
+
     <div class="result-board"></div>
+
 </div>
+
+
 
 <div class="topic-wrapper" id="topic-3">
+
     <h2>Topic 3: Career</h2>
+
     <div class="reading-section">
+
         <div class="passages">
+
             <div class="passage-box">
+
                 <strong>A.</strong> "When I finished school"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Học xong (finished school) thì tự do (free)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>B.</strong> "I went straight to university"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Học đại học (university) thì thay đổi (change) công việc (working)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>C.</strong> "As a child,"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Còn nhỏ (as a child) thì tay (hands) ko quá dài (long)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>D.</strong> "After school"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Ra trường (after school), công việc đầu tiên (first job) rất linh hoạt (flexible)</div>
+
             </div>
+
         </div>
+
         <div class="questions">
+
             <div class="question-item" data-answer="A"><span class="q-text">Benefited from working for free?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="B"><span class="q-text">Did not want to change to other careers?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="B"><span class="q-text">Enjoyed working when training?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="C"><span class="q-text">Enjoyed doing things with their hands?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="C"><span class="q-text">Thinks their training was too long?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="D"><span class="q-text">Enjoyed working in a flexible work environment?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="D"><span class="q-text">Thinks it was hard to get the first job?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <button class="check-btn" onclick="checkAnswers('topic-3')">Kiểm tra kết quả</button>
+
         </div>
+
     </div>
+
     <div class="result-board"></div>
+
 </div>
+
+
 
 <div class="topic-wrapper" id="topic-4">
+
     <h2>Topic 4: Volunteering</h2>
+
     <div class="reading-section">
+
         <div class="passages">
+
             <div class="passage-box">
+
                 <strong>A.</strong> "Boyd: I understand many young people like volunteering abroad"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Hiểu (understand) văn hoá (culture) địa phương (local)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>B.</strong> "Emilia: My mother was very involved with local charities,"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
-                <div class="mnemonic">Mẹo nhớ: Mẹ (mother) kết bạn (make friends) thông qua công việc (career)</div>
+
+                <div class="mnemonic">Mẹo nhớ: Mẹo nhớ: Mẹ (mother) kết bạn (make friends) thông qua công việc (career)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>C.</strong> "Noah: I'm busy with work these days"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Bận (busy) kiếm tiền (money)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>D.</strong> "Chinua: I don't have many financial resources"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Đi du lịch (travel) không có (don't have) lợi ích (benefits)</div>
+
             </div>
+
         </div>
+
         <div class="questions">
+
             <div class="question-item" data-answer="A"><span class="q-text">Who thinks volunteering is good for culture?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="A"><span class="q-text">Who thinks volunteering should help local communities?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="B"><span class="q-text">Who thinks volunteering can help advance career?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="B"><span class="q-text">Who thinks volunteering is a good way to make friends?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="C"><span class="q-text">Who thinks volunteering can be helped by giving money?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="D"><span class="q-text">Who thinks volunteering is a good reason to travel?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="D"><span class="q-text">Who thinks volunteering enjoys physical benefits?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <button class="check-btn" onclick="checkAnswers('topic-4')">Kiểm tra kết quả</button>
+
         </div>
+
     </div>
+
     <div class="result-board"></div>
+
 </div>
+
+
 
 <div class="topic-wrapper" id="topic-5">
+
     <h2>Topic 5: Extreme Sports</h2>
+
     <div class="reading-section">
+
         <div class="passages">
+
             <div class="passage-box">
+
                 <strong>A.</strong> "I don’t usually like sports"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Tôi không thường thích (I don't usually like) lần đầu (first) tập huấn (training)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>B.</strong> "Some people like jumping out of aero planes"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Vài người thích nhảy (Some people like jumping) theo cách truyền thống (traditional) dù không cần thiết (not necessary)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>C.</strong> "Doing free-diving requires"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Lặn tự do (Doing free-diving) tự nhiên (nature) thường xuyên hơn (more often) là tốt</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>D.</strong> "As a child, I used to do sports"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Khi còn nhỏ (As a child) tôi tránh (avoid) chơi thể thao</div>
+
             </div>
+
         </div>
+
         <div class="questions">
+
             <div class="question-item" data-answer="A"><span class="q-text">Who enjoy doing extreme sports after first attempt?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="A"><span class="q-text">Who thinks training is important before doing extreme sports?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="B"><span class="q-text">Who thinks extreme sports are not necessary for them?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="B"><span class="q-text">Who prefers traditional sports?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="C"><span class="q-text">Who wishes they are able to do extreme sports more often?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="C"><span class="q-text">Who enjoy the nature while doing sports?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="D"><span class="q-text">Who avoids doing any sports?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <button class="check-btn" onclick="checkAnswers('topic-5')">Kiểm tra kết quả</button>
+
         </div>
+
     </div>
+
     <div class="result-board"></div>
+
 </div>
+
     
-<div class="topic-wrapper" id="topic-6">
+
+    <div class="topic-wrapper" id="topic-6">
+
     <h2>Topic 6: Clean local park</h2>
+
     <div class="reading-section">
+
         <div class="passages">
+
             <div class="passage-box">
+
                 <strong>A.</strong> "I adore spending time with my children at the park"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Tôi thích (adore) nơi đẹp (beautiful) để xin giúp đỡ (help)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>B.</strong> "I just don't have enough free time"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Tôi chỉ (just) ước một cuộc sống bận rộn (busy life) vì tương lai có việc (future employement)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>C.</strong> "It is a good idea not go far"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Nó là (It is) khu vực (areas) cần phải dọn thường xuyên (regularly)</div>
+
             </div>
+
             <div class="passage-box">
+
                 <strong>D.</strong> "The park is of great importance"
+
                 <br><button class="toggle-btn" onclick="toggleMnemonic(this)">Hiện / Ẩn mẹo nhớ</button>
+
                 <div class="mnemonic">Mẹo nhớ: Công viên (the park) dành cho trẻ con</div>
+
             </div>
+
         </div>
+
         <div class="questions">
+
             <div class="question-item" data-answer="A"><span class="q-text">Think the park is a beautiful place to relax?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="A"><span class="q-text">Who will ask other people to help?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="B"><span class="q-text">Who can't help because of busy life?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="B"><span class="q-text">Who thinks volunteering can help with future employment?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="C"><span class="q-text">Who thinks other local areas need cleaning?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="C"><span class="q-text">Who thinks cleaning should happen regularly?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <div class="question-item" data-answer="D"><span class="q-text">Who thinks volunteering is important for children?</span><select class="user-answer"><option value="">Chọn...</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+
             <button class="check-btn" onclick="checkAnswers('topic-6')">Kiểm tra kết quả</button>
+
         </div>
+
     </div>
+
     <div class="result-board"></div>
+
 </div>
+
+
 
 <script>
-// Hàm xử lý xáo trộn toàn bộ (Cả đoạn văn A,B,C,D và câu hỏi)
-function shuffleAllData() {
-    const allTopics = document.querySelectorAll('.topic-wrapper');
-    const letters = ['A', 'B', 'C', 'D'];
-
-    allTopics.forEach(topic => {
-        // --- BƯỚC 1: Xử lý xáo trộn các Đoạn văn (Passages) ---
-        const passagesContainer = topic.querySelector('.passages');
-        const passageBoxes = Array.from(passagesContainer.querySelectorAll('.passage-box'));
-        
-        // Gán tên gốc (A, B, C, D) dựa theo vị trí lúc đầu
-        let passagesData = passageBoxes.map((box, index) => {
-            return {
-                element: box,
-                originalLetter: letters[index]
-            };
-        });
-
-        // Xáo trộn mảng đoạn văn
-        for (let i = passagesData.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [passagesData[i], passagesData[j]] = [passagesData[j], passagesData[i]];
-        }
-
-        // Bản đồ ánh xạ (Ví dụ: A cũ giờ thành C mới)
-        const mapping = {};
-        
-        // Gắn lại vào DOM và đổi tên chữ cái A,B,C,D theo vị trí mới
-        passagesData.forEach((data, index) => {
-            const newLetter = letters[index];
-            mapping[data.originalLetter] = newLetter; // Lưu lại sự thay đổi
-            
-            // Tìm thẻ <strong> để đổi thành chữ cái mới
-            const strongTag = data.element.querySelector('strong');
-            if(strongTag) {
-                strongTag.innerText = newLetter + ".";
-            }
-            
-            passagesContainer.appendChild(data.element);
-        });
-
-        // --- BƯỚC 2: Cập nhật đáp án & Xáo trộn Câu hỏi ---
-        const questionsContainer = topic.querySelector('.questions');
-        const questions = Array.from(questionsContainer.querySelectorAll('.question-item'));
-        const checkBtn = questionsContainer.querySelector('.check-btn');
-
-        questions.forEach(q => {
-            // Đổi data-answer cũ thành data-answer mới dựa trên mapping
-            const oldAnswer = q.getAttribute('data-answer');
-            if (mapping[oldAnswer]) {
-                q.setAttribute('data-answer', mapping[oldAnswer]);
-            }
-        });
-
-        // Thuật toán xáo trộn vị trí câu hỏi
-        for (let i = questions.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [questions[i], questions[j]] = [questions[j], questions[i]];
-        }
-        
-        // Gắn lại các câu hỏi đã tráo vào DOM (đặt trước nút Kiểm tra)
-        questions.forEach(q => questionsContainer.insertBefore(q, checkBtn));
-    });
-}
 
 // Chạy hàm xáo trộn ngay khi mở web
+
 window.onload = function() {
+
     document.getElementById('topic-1').style.display = 'block';
-    shuffleAllData(); // Gọi hàm xáo trộn tổng hợp mới
+
+    shuffleAllQuestions();
+
 };
 
-function changeTopic() {
+
+
+// Hàm xáo trộn vị trí câu hỏi cho tất cả các Topic
+
+function shuffleAllQuestions() {
+
     const allTopics = document.querySelectorAll('.topic-wrapper');
+
     allTopics.forEach(topic => {
-        topic.style.display = 'none';
-        // Reset lại màu và giá trị khi đổi bài
-        topic.querySelectorAll('.question-item').forEach(q => {
-            q.classList.remove('wrong', 'correct');
-            q.querySelector('.user-answer').value = '';
-        });
-        topic.querySelector('.result-board').style.display = 'none';
+
+        const questionsContainer = topic.querySelector('.questions');
+
+        // Lấy tất cả các câu hỏi bỏ vào mảng
+
+        const questions = Array.from(questionsContainer.querySelectorAll('.question-item'));
+
+        const checkBtn = questionsContainer.querySelector('.check-btn');
+
+        
+
+        // Thuật toán Fisher-Yates để đảo vị trí ngẫu nhiên
+
+        for (let i = questions.length - 1; i > 0; i--) {
+
+            const j = Math.floor(Math.random() * (i + 1));
+
+            [questions[i], questions[j]] = [questions[j], questions[i]];
+
+        }
+
+        
+
+        // Gắn lại các câu hỏi đã tráo vào DOM (đặt trước nút Kiểm tra)
+
+        questions.forEach(q => questionsContainer.insertBefore(q, checkBtn));
+
     });
-    
-    const selectedTopicId = document.getElementById('topic-select').value;
-    document.getElementById(selectedTopicId).style.display = 'block';
+
 }
+
+
+
+function changeTopic() {
+
+    const allTopics = document.querySelectorAll('.topic-wrapper');
+
+    allTopics.forEach(topic => {
+
+        topic.style.display = 'none';
+
+        // Reset lại màu và giá trị khi đổi bài
+
+        topic.querySelectorAll('.question-item').forEach(q => {
+
+            q.classList.remove('wrong', 'correct');
+
+            q.querySelector('.user-answer').value = '';
+
+        });
+
+        topic.querySelector('.result-board').style.display = 'none';
+
+    });
+
+    
+
+    const selectedTopicId = document.getElementById('topic-select').value;
+
+    document.getElementById(selectedTopicId).style.display = 'block';
+
+}
+
+
 
 function toggleMnemonic(button) {
+
     const mnemonicDiv = button.nextElementSibling;
+
     if (mnemonicDiv.style.display === "none" || mnemonicDiv.style.display === "") {
+
         mnemonicDiv.style.display = "block";
+
     } else {
+
         mnemonicDiv.style.display = "none";
+
     }
+
 }
+
+
 
 function checkAnswers(topicId) {
+
     let score = 0;
+
     const topicContainer = document.getElementById(topicId);
+
     const questions = topicContainer.querySelectorAll('.question-item');
+
     const total = questions.length;
 
+
+
     questions.forEach(q => {
+
         const selected = q.querySelector('.user-answer').value;
+
         const correct = q.getAttribute('data-answer');
+
         
+
         if (selected === correct) {
+
             score++;
+
             q.classList.remove('wrong');
+
             q.classList.add('correct');
+
         } else {
+
             q.classList.remove('correct');
+
             q.classList.add('wrong');
+
         }
+
     });
 
+
+
     const resultBoard = topicContainer.querySelector('.result-board');
+
     resultBoard.style.display = 'block';
+
     resultBoard.innerHTML = `Đúng ${score}/${total}`;
+
 }
+
 </script>
 
+
+
 </body>
+
 </html>
