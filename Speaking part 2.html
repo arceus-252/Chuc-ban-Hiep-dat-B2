@@ -7,38 +7,17 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; line-height: 1.6; padding: 15px; }
-        #loginScreen {
-            max-width: 400px;
-            margin: 100px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-align: center;
-        }
+        #loginScreen { max-width: 400px; margin: 100px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
         .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; }
         h2, h3 { color: #2c3e50; text-align: center; margin-bottom: 5px; }
         .subtitle { text-align: center; color: #666; margin-bottom: 20px; font-size: 14px; }
-        
-        /* Style cho phần chọn đề thi */
         .topic-selector-container { margin-bottom: 20px; text-align: center; }
         select { padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; width: 100%; max-width: 400px; cursor: pointer; background-color: #fff; }
-
-        .question-box { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 15px; 
-            background: #eef2f5; 
-            padding: 15px; 
-            border-radius: 8px; 
-            margin-bottom: 25px; 
-            border-top: 5px solid #007bff; 
-        }
+        .question-box { display: flex; flex-direction: column; gap: 15px; background: #eef2f5; padding: 15px; border-radius: 8px; margin-bottom: 25px; border-top: 5px solid #007bff; }
         .question-image { width: 100%; border-radius: 5px; overflow: hidden; background: #ddd; text-align: center; }
         .question-image img { width: 100%; max-height: 250px; object-fit: contain; display: block; }
         .question-text ul { padding-left: 20px; margin-top: 10px; }
         .question-text li { margin-bottom: 8px; font-weight: 500; font-size: 16px; }
-
         .form-group { margin-bottom: 15px; }
         input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         .btn { padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 16px; }
@@ -46,16 +25,14 @@
         .btn-success:hover { background-color: #218838; }
         .btn-danger { background-color: #dc3545; color: white; }
         .btn-danger:hover { background-color: #c82333; }
-        .btn-primary { background-color: #007bff; color: white; width: 100%; margin-top: 15px; }
+        .btn-primary { background-color: #007bff; color: white; margin-top: 15px; }
         .btn-primary:hover { background-color: #0069d9; }
+        .btn-warning { background-color: #ffc107; color: #212529; }
+        .btn-warning:hover { background-color: #e0a800; }
         .btn:disabled { background-color: #6c757d; cursor: not-allowed; opacity: 0.7; }
-        
-        #transcript-box { border: 1px solid #ced4da; padding: 15px; min-height: 120px; background-color: #e9ecef; border-radius: 5px; margin-bottom: 20px; font-size: 16px; }
+        /* Đã biến thành textarea để có thể chỉnh sửa */
+        #transcript-box { width: 100%; border: 1px solid #ced4da; padding: 15px; min-height: 120px; background-color: #fff; border-radius: 5px; margin-bottom: 20px; font-size: 16px; box-sizing: border-box; resize: vertical; font-family: inherit;}
         #result-box { margin-top: 20px; padding: 20px; border: 1px solid #b8daff; background-color: #cce5ff; border-radius: 5px; display: none; font-size: 15px;}
-        #result-box p { margin-bottom: 10px; }
-        #result-box ul, #result-box ol { margin-bottom: 10px; padding-left: 20px; }
-        #result-box strong { color: #0056b3; }
-
         .timer { font-size: 36px; color: #dc3545; text-align: center; font-weight: bold; margin: 15px 0; font-family: monospace;}
         #loading { display: none; text-align: center; margin-top: 15px; font-weight: bold; color: #007bff; }
     </style>
@@ -65,7 +42,7 @@
         <h2>🔒 Nhập mật khẩu</h2>
         <p>Nhập pass bên dưới hoặc là bị kick</p>
         <input type="password" id="matKhauInput" placeholder="Nhập pass ở đây:">
-        <button class="btn btn-primary" onclick="kiemTraMatKhau()">Vào test</button>
+        <button class="btn btn-primary" onclick="kiemTraMatKhau()" style="width: 100%;">Vào test</button>
         <p id="loiMatKhau" style="color: red; display: none; margin-top: 10px;">Sai mật khẩu rồi lêu lêu ahihi 😛</p>
     </div>
 
@@ -77,7 +54,7 @@
         <label for="api-key" style="color: #856404; display: block; margin-bottom: 5px;"><strong>🔑 Nhập API Key:</strong></label>
         <div style="display: flex; gap: 10px;">
             <input type="password" id="api-key" placeholder="Dán API Key vào đây...">
-            <button class="btn btn-success" style="white-space: nowrap; padding: 10px;" onclick="saveApiKey()">Lưu Key</button>
+            <button class="btn btn-success" style="white-space: nowrap; padding: 10px; margin-top:0;" onclick="saveApiKey()">Lưu Key</button>
         </div>
     </div>
 
@@ -108,17 +85,18 @@
     <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
 
     <div id="speaking-section">
-        <div class="timer" id="timer-display">00:45</div>
-        
-        <div style="text-align: center; margin-bottom: 20px; display: flex; justify-content: center; gap: 10px;">
-            <button id="btn-record" class="btn btn-success">🎙️ Bắt đầu (45s)</button>
-            <button id="btn-stop" class="btn btn-danger" disabled>🛑 Nộp sớm</button>
+        <div class="timer" id="timer-display">00:00</div>
+
+        <div style="text-align: center; margin-bottom: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <button id="btn-prep" class="btn btn-warning" style="margin-top:0;">⏳ Chuẩn bị (60s)</button>
+            <button id="btn-record" class="btn btn-success" style="margin-top:0;" disabled>🎙️ Thu âm (45s)</button>
+            <button id="btn-stop" class="btn btn-danger" style="margin-top:0;" disabled>🛑 Dừng</button>
         </div>
 
-        <p><strong>Nội dung nói sẽ được hiển thị bên dưới này nên là để ý phát âm:</strong></p>
-        <div id="transcript-box"> Lưu ý: Nhấn "Bắt đầu" và cho phép truy cập Micro để bắt đầu</div>
+        <p><strong>Nội dung bóc băng (Bạn có thể SỬA CHỮ thủ công ở đây nếu máy nghe nhầm trước khi nộp):</strong></p>
+        <textarea id="transcript-box" placeholder="Sau khi thu âm xong, chữ sẽ hiện ở đây..."></textarea>
 
-        <button id="btn-submit" class="btn btn-primary" disabled>📤 Gửi cho AI chấm </button>
+        <button id="btn-submit" class="btn btn-primary" style="width: 100%;" disabled>📤 Gửi cho AI chấm </button>
         <div id="loading">Đang gửi cho AI chấm... Đợi khoảng 20s bạn ơi ⏳</div>
     </div>
 
@@ -126,46 +104,15 @@
 </div>
 
 <script>
-    // --- 0. DỮ LIỆU CÁC ĐỀ THI ---
+    // --- 0. DỮ LIỆU ĐỀ THI ---
     const topicsData = {
-        "shopping": {
-            title: "Topic: Shopping",
-            image: "https://raw.githubusercontent.com/arceus-252/-nh/refs/heads/main/Wentshopping.jpeg",
-            q1: "1. Describe the picture?",
-            q2: "2. Tell me the last time you went shopping?",
-            q3: "3. Why do some people dislike busy places?"
-        },
-        "artwork": {
-            title: "Topic: Art & Culture",
-            image: "https://raw.githubusercontent.com/arceus-252/-nh/refs/heads/main/Artwork.jpeg",
-            q1: "1. Describe the picture?",
-            q2: "2. Do you often visit art galleries or museums?",
-            q3: "3. How does art influence our daily lives?"
-        },
-        "vacation": {
-            title: "Topic: Vacation",
-            image: "https://raw.githubusercontent.com/arceus-252/-nh/refs/heads/main/vacation.jpeg",
-            q1: "1. Describe the picture?",
-            q2: "2. What was the best vacation you have ever had?",
-            q3: "3. Why is it important for people to take holidays?"
-        },
-        "healthcare": {
-            title: "Topic: Healthcare",
-            image: "https://raw.githubusercontent.com/arceus-252/-nh/refs/heads/main/Takecare.jpeg",
-            q1: "1. Describe the picture?",
-            q2: "2. Who usually takes care of you when you are sick?",
-            q3: "3. What should people do to maintain a healthy lifestyle?"
-        },
-        "crowded": {
-            title: "Topic: Crowded Places",
-            image: "https://raw.githubusercontent.com/arceus-252/-nh/refs/heads/main/Crownd.jpeg",
-            q1: "1. Describe the picture?",
-            q2: "2. Have you ever been in a very crowded place?",
-            q3: "3. What are the disadvantages of living in a big city?"
-        }
+        "shopping": { title: "Topic: Shopping", image: "https://raw.githubusercontent.com/arceus-252/-nh/refs/heads/main/Wentshopping.jpeg", q1: "1. Describe the picture?", q2: "2. Tell me the last time you went shopping?", q3: "3. Why do some people dislike busy places?" },
+        "artwork": { title: "Topic: Art & Culture", image: "https://raw.githubusercontent.com/arceus-252/-nh/refs/heads/main/Artwork.jpeg", q1: "1. Describe the picture?", q2: "2. Do you often visit art galleries or museums?", q3: "3. How does art influence our daily lives?" },
+        "vacation": { title: "Topic: Vacation", image: "https://raw.githubusercontent.com/arceus-252/-nh/refs/heads/main/vacation.jpeg", q1: "1. Describe the picture?", q2: "2. What was the best vacation you have ever had?", q3: "3. Why is it important for people to take holidays?" },
+        "healthcare": { title: "Topic: Healthcare", image: "https://raw.githubusercontent.com/arceus-252/-nh/refs/heads/main/Takecare.jpeg", q1: "1. Describe the picture?", q2: "2. Who usually takes care of you when you are sick?", q3: "3. What should people do to maintain a healthy lifestyle?" },
+        "crowded": { title: "Topic: Crowded Places", image: "https://raw.githubusercontent.com/arceus-252/-nh/refs/heads/main/Crownd.jpeg", q1: "1. Describe the picture?", q2: "2. Have you ever been in a very crowded place?", q3: "3. What are the disadvantages of living in a big city?" }
     };
 
-    // Logic thay đổi giao diện khi chọn đề thi mới
     document.getElementById('topic-select').addEventListener('change', function() {
         const selectedTopic = topicsData[this.value];
         document.getElementById('display-image').src = selectedTopic.image;
@@ -173,19 +120,38 @@
         document.getElementById('q1').innerText = selectedTopic.q1;
         document.getElementById('q2').innerText = selectedTopic.q2;
         document.getElementById('q3').innerText = selectedTopic.q3;
-        
-        // Reset lại khung kết quả và thu âm mỗi khi đổi đề
-        document.getElementById('result-box').style.display = 'none';
-        document.getElementById('transcript-box').innerHTML = 'Lưu ý: Nhấn "Bắt đầu" và cho phép truy cập Micro để bắt đầu';
-        document.getElementById('btn-submit').disabled = true;
+        resetApp();
     });
 
-    // --- 1. XỬ LÝ ĐĂNG NHẬP ---
-    const matKhauDung = "25022002"; 
-    
-    function kiemTraMatKhau() {
+    function resetApp() {
+        clearInterval(timerInterval);
+        document.getElementById('timer-display').innerText = "00:00";
+        document.getElementById('timer-display').style.color = "#dc3545";
+        document.getElementById('result-box').style.display = 'none';
+        document.getElementById('transcript-box').value = '';
+        document.getElementById('btn-prep').disabled = false;
+        document.getElementById('btn-record').disabled = true;
+        document.getElementById('btn-stop').disabled = true;
+        document.getElementById('btn-submit').disabled = true;
+    }
+
+    // --- 1. XỬ LÝ ĐĂNG NHẬP BẰNG HASHING ---
+    // Mã SHA-256 của chuỗi "25022002". Đã ẩn giấu mật khẩu gốc!
+    const hashMatKhauDung = "246edcd1ddb9df57c6b9070f80bc2ee25b39bfba1052fb58fbc8d3132cf05d52";
+
+    async function maHoaSHA256(text) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(text);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function kiemTraMatKhau() {
         const nhapVao = document.getElementById('matKhauInput').value;
-        if (nhapVao === matKhauDung) {
+        const hashNhapVao = await maHoaSHA256(nhapVao);
+        
+        if (hashNhapVao === hashMatKhauDung) {
             document.getElementById('loginScreen').style.display = "none";
             document.getElementById('mainApp').style.display = "block";
         } else {
@@ -194,42 +160,71 @@
     }
 
     document.getElementById("matKhauInput").addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            kiemTraMatKhau();
-        }
+        if (event.key === "Enter") { event.preventDefault(); kiemTraMatKhau(); }
     });
 
-    // --- 2. XỬ LÝ API VÀ THU ÂM ---
+    // --- 2. LƯU API VÀ TIMER CHUẨN BỊ / THU ÂM ---
     const apiKeyInput = document.getElementById('api-key');
-    if (localStorage.getItem('gemini_api_key')) {
-        apiKeyInput.value = localStorage.getItem('gemini_api_key');
-    }
-
+    if (localStorage.getItem('gemini_api_key')) apiKeyInput.value = localStorage.getItem('gemini_api_key');
     function saveApiKey() {
-        const key = apiKeyInput.value.trim();
-        if (key) {
-            localStorage.setItem('gemini_api_key', key);
-            alert("Đã lưu API Key thành công!");
-        } else {
-            alert("Vui lòng nhập API Key!");
-        }
+        if (apiKeyInput.value.trim()) { localStorage.setItem('gemini_api_key', apiKeyInput.value.trim()); alert("Đã lưu API Key!"); }
     }
 
+    const btnPrep = document.getElementById('btn-prep');
     const btnRecord = document.getElementById('btn-record');
     const btnStop = document.getElementById('btn-stop');
     const btnSubmit = document.getElementById('btn-submit');
     const transcriptBox = document.getElementById('transcript-box');
     const timerDisplay = document.getElementById('timer-display');
-    
+
     let recognition;
-    let finalTranscript = '';
     let timerInterval;
-    let timeLeft = 45; 
+    let timeLeft = 0; 
     let isStoppedManually = false;
+    let currentMode = ''; // 'prep' hoặc 'record'
 
+    // Xử lý đếm ngược
+    function startTimer(seconds, mode) {
+        clearInterval(timerInterval);
+        timeLeft = seconds;
+        currentMode = mode;
+        
+        timerDisplay.style.color = mode === 'prep' ? "#ffc107" : "#28a745";
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerDisplay.innerText = "00:" + (timeLeft < 10 ? "0" : "") + timeLeft;
+
+            if (timeLeft <= 10) timerDisplay.style.color = "#dc3545"; 
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                if (mode === 'prep') {
+                    // Hết giờ chuẩn bị -> Chuyển sang thu âm
+                    alert("Hết 60s chuẩn bị! Nhấn Bắt đầu thu âm ngay!");
+                    btnPrep.disabled = false;
+                    btnRecord.disabled = false;
+                    btnStop.disabled = true;
+                } else if (mode === 'record') {
+                    // Hết giờ thu âm
+                    isStoppedManually = true;
+                    if(recognition) recognition.stop();
+                    btnRecord.disabled = true;
+                    btnStop.disabled = true;
+                }
+            }
+        }, 1000);
+    }
+
+    btnPrep.addEventListener('click', () => {
+        btnPrep.disabled = true;
+        btnRecord.disabled = false; // Cho phép skip bấm thu âm luôn
+        transcriptBox.value = '';
+        startTimer(60, 'prep');
+    });
+
+    // Cài đặt Microphone
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
         recognition.continuous = true;
@@ -237,105 +232,77 @@
         recognition.lang = 'en-US'; 
 
         recognition.onstart = function() {
+            btnPrep.disabled = true;
             btnRecord.disabled = true;
             btnStop.disabled = false;
             btnSubmit.disabled = true;
-            
-            if (timeLeft === 45) {
-                transcriptBox.innerHTML = '';
-                finalTranscript = '';
-                timerDisplay.innerText = "00:" + timeLeft;
-                timerDisplay.style.color = "#28a745"; 
-
-                timerInterval = setInterval(() => {
-                    timeLeft--;
-                    timerDisplay.innerText = "00:" + (timeLeft < 10 ? "0" : "") + timeLeft;
-                    
-                    if (timeLeft <= 10) {
-                        timerDisplay.style.color = "#dc3545"; 
-                    }
-
-                    if (timeLeft <= 0) {
-                        isStoppedManually = true;
-                        recognition.stop(); 
-                    }
-                }, 1000);
-            }
+            startTimer(45, 'record');
+            transcriptBox.value = '';
         };
 
         recognition.onresult = function(event) {
-            let interimTranscript = '';
+            let finalTranscript = '';
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) {
                     finalTranscript += event.results[i][0].transcript + ' ';
-                } else {
-                    interimTranscript += event.results[i][0].transcript;
                 }
             }
-            transcriptBox.innerHTML = finalTranscript + '<span style="color: #999; font-style: italic;">' + interimTranscript + '</span>';
-        };
-
-        recognition.onerror = function(event) {
-            console.error("Lỗi Micro: ", event.error);
-            if (event.error !== 'no-speech') {
-                alert("Lỗi Micro: " + event.error + ". Hãy chắc chắn bạn đã cấp quyền Micro.");
-                clearInterval(timerInterval);
-                timerDisplay.innerText = "00:45";
-                btnRecord.disabled = false;
-                btnStop.disabled = true;
+            if(finalTranscript) {
+                // Nối thêm vào giá trị hiện tại của textarea
+                transcriptBox.value += finalTranscript; 
             }
         };
 
         recognition.onend = function() {
-            if (timeLeft > 0 && !isStoppedManually) {
-                try {
-                    recognition.start();
-                } catch(e) {
-                    console.log("Không thể tự động khởi động lại micro.");
-                }
+            if (timeLeft > 0 && !isStoppedManually && currentMode === 'record') {
+                try { recognition.start(); } catch(e) { }
             } else {
                 clearInterval(timerInterval);
                 timerDisplay.style.color = "#dc3545";
-                btnRecord.disabled = false;
+                btnPrep.disabled = false;
+                btnRecord.disabled = true;
                 btnStop.disabled = true;
-                if (finalTranscript.trim() !== '') {
-                    btnSubmit.disabled = false;
-                }
+                if (transcriptBox.value.trim() !== '') btnSubmit.disabled = false;
             }
         };
 
         btnRecord.addEventListener('click', () => { 
             isStoppedManually = false;
-            timeLeft = 45;
-            try {
-                recognition.start(); 
-            } catch(e) {
-                alert("Không thể khởi động Micro. Vui lòng tải lại trang.");
-            }
+            try { recognition.start(); } catch(e) { alert("Lỗi tải Micro. Hãy tải lại trang."); }
         });
-        
+
         btnStop.addEventListener('click', () => { 
             isStoppedManually = true;
             recognition.stop(); 
+            clearInterval(timerInterval);
+            timerDisplay.style.color = "#dc3545";
+            btnPrep.disabled = false;
+            btnRecord.disabled = true;
+            btnStop.disabled = true;
+            if (transcriptBox.value.trim() !== '') btnSubmit.disabled = false;
         });
-
     } else {
-        transcriptBox.innerHTML = "<span style='color:red;'>Trình duyệt/Ứng dụng này không hỗ trợ thu âm. Hãy copy đường link và mở bằng Google Chrome hoặc Safari bản mới nhất.</span>";
-        btnRecord.disabled = true;
+        transcriptBox.value = "Trình duyệt không hỗ trợ thu âm. Vui lòng gõ tay hoặc dùng Chrome/Safari.";
     }
 
+    // Cho phép gửi bài khi người dùng tự gõ text (không cần bấm thu âm)
+    transcriptBox.addEventListener('input', function() {
+        if (this.value.trim() !== '') {
+            btnSubmit.disabled = false;
+        } else {
+            btnSubmit.disabled = true;
+        }
+    });
+
+    // --- 3. GỬI PROMPT CHẤM ĐIỂM (Giữ mục tiêu B1) ---
     btnSubmit.addEventListener('click', async () => {
         const apiKey = localStorage.getItem('gemini_api_key');
-        if (!apiKey) {
-            alert("Vui lòng nhập và lưu API Key trước khi gửi bài!");
-            return;
-        }
+        if (!apiKey) return alert("Vui lòng nhập và lưu API Key trước khi gửi bài!");
 
-        const submissionText = finalTranscript.trim();
+        const submissionText = transcriptBox.value.trim();
         const loadingDiv = document.getElementById('loading');
         const resultBox = document.getElementById('result-box');
-        
-        // Lấy bộ câu hỏi của đề HIỆN TẠI trên màn hình để gửi cho AI
+
         const currentQ1 = document.getElementById('q1').innerText;
         const currentQ2 = document.getElementById('q2').innerText;
         const currentQ3 = document.getElementById('q3').innerText;
@@ -345,43 +312,39 @@
         resultBox.style.display = 'none';
 
         const promptText = `
-Bạn là một giám khảo tiếng Anh chuyên nghiệp chấm thi chứng chỉ Aptis. 
-Học viên đang thi Part 2 (Thời gian nói 45s). Mục tiêu của học viên là đạt Band B1.
+Bạn là giám khảo tiếng Anh chấm thi chứng chỉ Aptis. 
+Học viên thi Part 2 (Thời gian nói 45s). Mục tiêu của học viên là Band B1.
+Lưu ý: Transcript có thể có một vài lỗi chính tả nhẹ do phần mềm nhận diện giọng nói bóc băng sai, hãy linh hoạt khi chấm ngữ cảnh, tập trung vào cấu trúc câu.
 
-Đề bài học viên nhận được:
+Đề bài:
 ${currentQ1}
 ${currentQ2}
 ${currentQ3}
 
-Dưới đây là phần bóc băng (transcript) câu trả lời của học viên: 
+Transcript câu trả lời: 
 "${submissionText}"
 
-Hãy nhận xét bằng TIẾNG VIỆT thật ngắn gọn, súc tích, trình bày rõ ràng bằng Markdown theo các mục sau (bỏ qua phần chào hỏi rườm rà):
-1. **Đánh giá chung:** Câu trả lời này có trả lời đủ 3 câu hỏi không? Đạt khoảng mức nào (A1, A2, B1, B2 hay C1)?
-2. **Điểm tốt:** Liệt kê các từ vựng hoặc cấu trúc câu tốt.
-3. **Lỗi cần sửa & Cách khắc phục:** Chỉ ra lỗi sai ngữ pháp/từ vựng (nếu có) và cách nói tự nhiên hơn.
-4. **Bài mẫu tham khảo (Band B1):** Cung cấp một bài nói mẫu trong khoảng 120-140 từ để học viên tham khảo.
+Nhận xét bằng TIẾNG VIỆT, trình bày Markdown:
+1. **Đánh giá chung:** Có trả lời đủ 3 câu không? Đạt khoảng mức nào (A1, A2, B1)? (Không chấm quá khắt khe, học viên đang aim B1).
+2. **Điểm tốt:** Liệt kê các từ vựng/cấu trúc B1.
+3. **Lỗi cần sửa & Cách khắc phục:** Sửa lỗi ngữ pháp/cách diễn đạt.
+4. **Bài mẫu tham khảo (Band B1):** Cung cấp bài mẫu 120-140 từ, có từ vựng tốt nhưng cấu trúc dễ nhớ.
         `;
 
         try {
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: promptText }] }]
-                })
+                body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
             });
-
             const data = await response.json();
-            
             if (data.error) {
-                resultBox.innerHTML = `<span style="color: red;">Lỗi từ API: ${data.error.message}</span>`;
+                resultBox.innerHTML = `<span style="color: red;">Lỗi API: ${data.error.message}</span>`;
             } else {
-                let feedback = data.candidates[0].content.parts[0].text;
-                resultBox.innerHTML = `<h3 style="color:#0056b3; margin-top:0; text-align: center;">📝 NHẬN XÉT CỦA AI</h3><hr>${marked.parse(feedback)}`;
+                resultBox.innerHTML = `<h3 style="color:#0056b3; margin-top:0; text-align: center;">📝 NHẬN XÉT CỦA AI</h3><hr>${marked.parse(data.candidates[0].content.parts[0].text)}`;
             }
         } catch (error) {
-            resultBox.innerHTML = `<span style="color: red;">Lỗi kết nối: ${error.message}</span>`;
+            resultBox.innerHTML = `<span style="color: red;">Lỗi: ${error.message}</span>`;
         } finally {
             loadingDiv.style.display = 'none';
             resultBox.style.display = 'block';
@@ -389,6 +352,5 @@ Hãy nhận xét bằng TIẾNG VIỆT thật ngắn gọn, súc tích, trình b
         }
     });
 </script>
-
 </body>
 </html>
