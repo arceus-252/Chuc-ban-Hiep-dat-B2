@@ -135,33 +135,58 @@
         document.getElementById('btn-submit').disabled = true;
     }
 
-    // --- 1. XỬ LÝ ĐĂNG NHẬP BẰNG HASHING ---
-    // Mã SHA-256 của chuỗi "25022002". Đã ẩn giấu mật khẩu gốc!
-    const hashMatKhauDung = "246edcd1ddb9df57c6b9070f80bc2ee25b39bfba1052fb58fbc8d3132cf05d52";
+    // pass đây
+const hashMatKhauDung = "246edcd1ddb9df57c6b9070f80bc2ee25b39bfba1052fb58fbc8d3132cf05d52";
 
-    async function maHoaSHA256(text) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(text);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+async function maHoaSHA256(text) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function kiemTraMatKhau() {
+    const matKhauInput = document.getElementById('matKhauInput');
+    const loiMatKhau = document.getElementById('loiMatKhau');
+    const nhapVao = matKhauInput.value.trim(); // Cắt khoảng trắng thừa
+
+    // Ẩn thông báo lỗi cũ đi mỗi lần bấm kiểm tra lại
+    if (loiMatKhau) {
+        loiMatKhau.style.display = "none";
     }
 
-    async function kiemTraMatKhau() {
-        const nhapVao = document.getElementById('matKhauInput').value;
-        const hashNhapVao = await maHoaSHA256(nhapVao);
-        
-        if (hashNhapVao === hashMatKhauDung) {
-            document.getElementById('loginScreen').style.display = "none";
-            document.getElementById('mainApp').style.display = "block";
-        } else {
-            document.getElementById('loiMatKhau').style.display = "block";
+    // Nếu người dùng chưa nhập gì thì không làm gì cả
+    if (!nhapVao) {
+        return; 
+    }
+
+    const hashNhapVao = await maHoaSHA256(nhapVao);
+
+    if (hashNhapVao === hashMatKhauDung) {
+        // Đăng nhập thành công
+        document.getElementById('loginScreen').style.display = "none";
+        document.getElementById('mainApp').style.display = "block";
+        matKhauInput.value = ''; 
+// Xóa trắng ô input cho gọn
+    } else {
+        // Sai mật khẩu
+        if (loiMatKhau) {
+            loiMatKhau.style.display = "block";
+            loiMatKhau.textContent = "Sai mật khẩu, vui lòng thử lại!";
         }
+        matKhauInput.value = ''; // Xóa mật khẩu bị sai đi để người dùng nhập lại nhanh hơn
+        matKhauInput.focus(); // Tự động đưa con trỏ chuột quay lại ô nhập
     }
+}
 
-    document.getElementById("matKhauInput").addEventListener("keypress", function(event) {
-        if (event.key === "Enter") { event.preventDefault(); kiemTraMatKhau(); }
-    });
+// Bắt sự kiện ấn phím Enter để đăng nhập cho tiện
+document.getElementById("matKhauInput").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Ngăn chặn hành vi mặc định của phím Enter (nếu nằm trong form)
+        kiemTraMatKhau();
+    }
+});
 
     // --- 2. LƯU API VÀ TIMER CHUẨN BỊ / THU ÂM ---
     const apiKeyInput = document.getElementById('api-key');
