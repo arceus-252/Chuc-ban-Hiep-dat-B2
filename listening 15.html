@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn tập Aptis - Listening Part 15 (V3)</title>
+    <style>
+        :root {
+            --bg-main: #2b1b42; 
+            --bg-panel: #453264; 
+            --accent-color: #fca311; 
+            --text-light: #ffffff;
+            --text-dim: #d1c4e9;
+            --correct-color: #4CAF50;
+            --incorrect-color: #f44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-light);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* --- Thanh phân trang cuộn ngang --- */
+        .pagination-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 10px 0 20px 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--bg-panel) transparent;
+        }
+        
+        .pagination-container::-webkit-scrollbar { height: 6px; }
+        .pagination-container::-webkit-scrollbar-thumb {
+            background-color: var(--bg-panel);
+            border-radius: 10px;
+        }
+
+        .page-btn {
+            background-color: var(--bg-panel);
+            color: var(--text-light);
+            border: 2px solid transparent;
+            min-width: 45px;
+            height: 45px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover { background-color: #56407a; }
+        .page-btn.active {
+            border-color: var(--accent-color);
+            background-color: #3b2859;
+            border-width: 3px;
+        }
+
+        /* --- Màu trạng thái đúng/sai cho nút phân trang --- */
+        .page-btn.perfect { background-color: #2e7d32; } /* Xanh nếu đúng hết */
+        .page-btn.needs-review { background-color: #c62828; } /* Đỏ nếu có câu sai */
+        
+        /* Chỉnh màu khi nút trạng thái đang được chọn (active) */
+        .page-btn.active.perfect { background-color: #1b5e20; }
+        .page-btn.active.needs-review { background-color: #b71c1c; }
+
+        /* --- Khu vực điều hướng và Điểm --- */
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background-color: var(--bg-panel);
+            color: var(--text-light);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+        
+        .nav-btn:hover { background-color: #56407a; }
+        .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .progress-text { font-size: 1.2em; font-weight: bold; }
+
+        .score-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-align: right;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        /* --- Thẻ nội dung câu hỏi --- */
+        .topic-card {
+            background-color: #ffffff;
+            color: #333;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .topic-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .question-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 8px 0;
+        }
+
+        .question-text { flex: 1; padding-right: 15px; }
+
+        select {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            min-width: 100px;
+        }
+
+        select:disabled { background-color: #e9ecef; cursor: not-allowed; font-weight: bold; color: #333; }
+
+        .btn-check {
+            background-color: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: block;
+            margin: 20px auto 0;
+            transition: background 0.2s;
+        }
+        .btn-check:hover { background-color: #e59400; }
+
+        .btn-retry { background-color: #1976D2; color: #fff; }
+        .btn-retry:hover { background-color: #1565C0; }
+
+        .feedback-icon { margin-left: 10px; font-weight: bold; min-width: 100px; display: inline-block;}
+        .correct { color: var(--correct-color); }
+        .incorrect { color: var(--incorrect-color); }
+
+        .explanation {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fdf2d0;
+            border-left: 4px solid var(--accent-color);
+            border-radius: 4px;
+            color: #333;
+        }
+        .explanation h4 { margin-top: 0; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="pagination-container" id="pagination-nav"></div>
+
+    <div class="score-display">Điểm: <span id="current-score">0</span> / <span id="total-score">0</span></div>
+
+    <div class="nav-controls">
+        <button id="prev-btn" class="nav-btn" onclick="changePage(-1)">&#8592; Câu trước</button>
+        <div class="progress-text" id="progress-indicator"></div>
+        <button id="next-btn" class="nav-btn" onclick="changePage(1)">Câu tiếp theo &#8594;</button>
+    </div>
+
+    <div id="quiz-container"></div>
+
+    <script>
+        // BỘ DỮ LIỆU ĐẦY ĐỦ 12 CHỦ ĐỀ
+        const quizData = [
+            {
+                id: 1, title: "1. Singer and music (Man đọc trước)",
+                questions: [
+                    { id: "1a", text: "1. Singer can be good models for young", answer: "W" },
+                    { id: "1b", text: "2. Taste in music is a highly personal thing", answer: "B" },
+                    { id: "1c", text: "3. Music is a universal language", answer: "M" },
+                    { id: "1d", text: "4. Music can be used to manipulate people's feelings", answer: "B" }
+                ], explanation: "<strong>Wao</strong> bài hát <strong>mẹ</strong> hát <strong>bố</strong> khen hay <br><em>(W - B - M - B)</em>"
+            },
+            {
+                id: 2, title: "2. Community (Man đọc trước)",
+                questions: [
+                    { id: "2a", text: "1. Community design influence people behavior", answer: "B" },
+                    { id: "2b", text: "2. Sense of community takes time", answer: "W" },
+                    { id: "2c", text: "3. Work community and social community are the same", answer: "M" },
+                    { id: "2d", text: "4. Technology improve the way community formed", answer: "B" }
+                ], explanation: "<strong>Bà Will Mong Biết</strong> xây dựng cộng đồng (M nói)<br><em>(B - W - M - B)</em><br> Hoặc <br> <strong>Bà Mong Will Biết </strong> xây dựng cộng đồng (W nói) <br><em>(B - M - W - B)</em>"
+            },
+            {
+                id: 3, title: "3. Art (Man đọc trước)",
+                questions: [
+                    { id: "3a", text: "1. Art are only for few privileged", answer: "W" },
+                    { id: "3b", text: "2. Governments should invest more in arts", answer: "M" },
+                    { id: "3c", text: "3. Children should get involved in art early", answer: "B" },
+                    { id: "3d", text: "4. In the future, art will become accessible", answer: "M" }
+                ], explanation: "<strong>Will</strong> muốn <strong>bố mẹ</strong> cho phép học nghệ thuật (Art)<br><em>(W - M - B - M)</em>"
+            },
+            {
+                id: 4, title: "4. Internet (Man nói trước)",
+                questions: [
+                    { id: "4a", text: "1. There is too much information on the internet", answer: "W" },
+                    { id: "4b", text: "2. Finding information on the internet requires skills", answer: "B" },
+                    { id: "4c", text: "3. The use internet affects the way we think", answer: "M" },
+                    { id: "4d", text: "4. The internet makes young people less patient", answer: "B" }
+                ], explanation: "<strong>Will bảo mẹ biết</strong> dùng internet<br><em>(W - B - M - B)</em>"
+            },
+            {
+                id: 5, title: "5. Universities (Woman đọc trước)",
+                questions: [
+                    { id: "5a", text: "1. The internet makes education more accessible", answer: "B" },
+                    { id: "5b", text: "2. Social interaction are essential to university life", answer: "M" },
+                    { id: "5c", text: "3. Diverse curriculum is not always a good thing", answer: "W" },
+                    { id: "5d", text: "4. Competitions between universities should be encouraged", answer: "M" }
+                ], explanation: "Cả hai (<strong>Both</strong>) bà (<strong>Woman</strong>) ông (<strong>Man</strong>) đều muốn (<strong>Want - Man</strong>) tôi vào Đại học phụ nữ Việt Nam (phụ nữ mở lời)<br><em>(B - M - W - M)</em>"
+            },
+            {
+                id: 6, title: "6. Audition / Actor (Man mở lời)",
+                questions: [
+                    { id: "6a", text: "1. Auditions are the most important", answer: "M" },
+                    { id: "6b", text: "2. Actors response best to strong script", answer: "W" },
+                    { id: "6c", text: "3. Theatre acting and screen acting are different", answer: "B" },
+                    { id: "6d", text: "4. Actors should be praised as much as possible", answer: "B" }
+                ], explanation: "<strong>Mẹ will bảo bố</strong> thử giọng hát (audition)<br><em>(M - W - B - B)</em>"
+            },
+            {
+                id: 7, title: "7. Beauty (Woman đọc trước)",
+                questions: [
+                    { id: "7a", text: "1. People share similar ideas about beauty:", answer: "M" },
+                    { id: "7b", text: "2. Ideas about beauty change over time", answer: "W" },
+                    { id: "7c", text: "3. Beauty can be found in unlikely places", answer: "B" },
+                    { id: "7d", text: "4. Traditional ideas beauty are going to change", answer: "W" }
+                ], explanation: "<strong>Mẹ Windy</strong> rủ <strong>bố Windy</strong> chở đi làm đẹp<br><em>(M - W - B - W)</em>"
+            },
+            {
+                id: 8, title: "8. Local culture center (Woman đọc trước)",
+                questions: [
+                    { id: "8a", text: "1. Exhibition should be different", answer: "M" },
+                    { id: "8b", text: "2. The traditions are losing significance", answer: "B" },
+                    { id: "8c", text: "3. The local festival will disappear soon", answer: "W" },
+                    { id: "8d", text: "4. Schools are important", answer: "W" }
+                ], explanation: "<strong>Mẹ Bảo</strong> đi đến trung tâm văn hóa hát bài <strong>Wao Wao</strong><br><em>(M - B - W - W)</em>"
+            },
+            {
+                id: 9, title: "9. Politics (Chính trị - Woman đọc trước)",
+                questions: [
+                    { id: "9a", text: "1. Young people are becoming more into politics:", answer: "B" },
+                    { id: "9b", text: "2. Social media has changed politics", answer: "W" },
+                    { id: "9c", text: "3. People are now better informed on politics", answer: "M" },
+                    { id: "9d", text: "4. More women pursuit politics", answer: "B" }
+                ], explanation: "<strong>Bạn will</strong> là phụ nữ nhưng <strong>muốn bơi</strong> trong lĩnh vực chính trị (Politics)<br><em>(B - W - M - B)</em>"
+            },
+            {
+                id: 10, title: "10. Information Revolution and Technology (Man đọc trước)",
+                questions: [
+                    { id: "10a", text: "1. Future generation fail to cope with technology information", answer: "M" },
+                    { id: "10b", text: "2. Technology revolution is good for the economy:", answer: "W" },
+                    { id: "10c", text: "3. No computer is superior to the human brain", answer: "W" },
+                    { id: "10d", text: "4. More should be done to protect individual privacy", answer: "B" }
+                ], explanation: "<strong>Mẹ Win Win bắt</strong> học công nghệ (Technology)<br><em>(M - W - W - B)</em>"
+            },
+            {
+                id: 11, title: "11. Changes in workplace (Man mở đầu)",
+                questions: [
+                    { id: "11a", text: "1. Continuity is important", answer: "M" },
+                    { id: "11b", text: "2. Job security cannot be guaranteed", answer: "W" },
+                    { id: "11c", text: "3. Job satisfaction is important for motivator", answer: "B" },
+                    { id: "11d", text: "4. Technological is good for the economy", answer: "M" }
+                ], explanation: "<strong>Mẹ Win Bắt Mọi</strong> người thay đổi chỗ làm<br><em>(M - W - B - M)</em>"
+            },
+            {
+                id: 12, title: "12. Urban farming (Man đọc trước)",
+                questions: [
+                    { id: "12a", text: "1. Living space is more important than farming space:", answer: "W" },
+                    { id: "12b", text: "2. Farming space is appealing", answer: "M" },
+                    { id: "12c", text: "3. Farming space will benefit the urban economy", answer: "M" },
+                    { id: "12d", text: "4. Farming space is in need of more food", answer: "B" }
+                ], explanation: "<strong>Will Muốn Mẹ Bỏ</strong> làm nghề nông<br><em>(W - M - M - B)</em>"
+            }
+        ];
+
+        let currentIndex = 0; 
+        let totalScore = 0;
+        let totalQuestions = 0;
+        let isTopicChecked = new Array(quizData.length).fill(false); 
+        let topicStatus = new Array(quizData.length).fill('unattempted'); // Trạng thái: 'unattempted', 'perfect', 'needs-review'
+        let scorePerTopic = new Array(quizData.length).fill(0); // Lưu điểm từng phần
+        let userAnswers = {}; 
+
+        function init() {
+            quizData.forEach(topic => totalQuestions += topic.questions.length);
+            document.getElementById('total-score').innerText = totalQuestions;
+            renderPagination();
+            renderCurrentPage();
+        }
+
+        // Tạo thanh số cuộn ngang
+        function renderPagination() {
+            const nav = document.getElementById('pagination-nav');
+            nav.innerHTML = '';
+            quizData.forEach((topic, index) => {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${index === currentIndex ? 'active' : ''}`;
+                
+                // Thêm class màu sắc dựa trên trạng thái đúng/sai
+                if (topicStatus[index] === 'perfect') btn.classList.add('perfect');
+                if (topicStatus[index] === 'needs-review') btn.classList.add('needs-review');
+
+                btn.innerText = index + 1;
+                btn.onclick = () => jumpToPage(index);
+                btn.id = `page-btn-${index}`;
+                nav.appendChild(btn);
+            });
+            scrollToActiveNav();
+        }
+
+        function scrollToActiveNav() {
+            const activeBtn = document.getElementById(`page-btn-${currentIndex}`);
+            if(activeBtn) {
+                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        // Hiển thị nội dung
+        function renderCurrentPage() {
+            const topic = quizData[currentIndex];
+            const container = document.getElementById('quiz-container');
+            
+            document.getElementById('progress-indicator').innerText = `Chủ đề ${currentIndex + 1} / ${quizData.length}`;
+            document.getElementById('prev-btn').disabled = currentIndex === 0;
+            document.getElementById('next-btn').disabled = currentIndex === quizData.length - 1;
+
+            let cardHTML = `
+                <div class="topic-card">
+                    <div class="topic-title">${topic.title}</div>
+            `;
+
+            topic.questions.forEach((q) => {
+                const savedAns = userAnswers[q.id] || "";
+                const disabledState = isTopicChecked[currentIndex] ? "disabled" : "";
+
+                cardHTML += `
+                    <div class="question-row">
+                        <div class="question-text">${q.text}</div>
+                        <div>
+                            <select id="q_${q.id}" onchange="saveAnswer('${q.id}', this.value)" ${disabledState}>
+                                <option value="" ${savedAns===""?"selected":""}>-- Chọn --</option>
+                                <option value="M" ${savedAns==="M"?"selected":""}>Man</option>
+                                <option value="W" ${savedAns==="W"?"selected":""}>Woman</option>
+                                <option value="B" ${savedAns==="B"?"selected":""}>Both</option>
+                            </select>
+                            <span id="feedback_${q.id}" class="feedback-icon"></span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Nếu đã check, hiện nút LÀM LẠI. Nếu chưa, hiện nút KIỂM TRA.
+            if (isTopicChecked[currentIndex]) {
+                cardHTML += `
+                    <button class="btn-check btn-retry" onclick="resetCurrentTopic()">Làm lại chủ đề này</button>
+                    <div id="exp_${topic.id}" class="explanation" style="display:block">
+                        <h4>Mẹo nhớ / Giải thích:</h4>
+                        ${topic.explanation}
+                    </div>
+                </div>`;
+            } else {
+                cardHTML += `
+                    <button class="btn-check" id="check-btn-${topic.id}" onclick="checkCurrentTopic()">Nộp bài & Kiểm tra</button>
+                    <div id="exp_${topic.id}" class="explanation" style="display:none">
+                        <h4>Mẹo nhớ / Giải thích:</h4>
+                        ${topic.explanation}
+                    </div>
+                </div>`;
+            }
+
+            container.innerHTML = cardHTML;
+
+            if(isTopicChecked[currentIndex]) {
+                reRenderFeedback(topic);
+            }
+        }
+
+        function saveAnswer(qId, val) { userAnswers[qId] = val; }
+
+        function changePage(step) {
+            currentIndex += step;
+            updateUI();
+        }
+
+        function jumpToPage(index) {
+            currentIndex = index;
+            updateUI();
+        }
+
+        function updateUI() {
+            renderPagination(); 
+            renderCurrentPage(); 
+        }
+
+        // Tính lại tổng điểm
+        function updateTotalScore() {
+            totalScore = scorePerTopic.reduce((a, b) => a + b, 0);
+            document.getElementById('current-score').innerText = totalScore;
+        }
+
+        // Xử lý khi Nộp bài
+        function checkCurrentTopic() {
+            const topic = quizData[currentIndex];
+            let earnedScore = 0;
+
+            // Chấm điểm từng câu (Bỏ qua kiểm tra điền đầy đủ, trống xem như sai)
+            topic.questions.forEach(q => {
+                const selectEl = document.getElementById(`q_${q.id}`);
+                const feedbackEl = document.getElementById(`feedback_${q.id}`);
+                selectEl.disabled = true; 
+                
+                if (userAnswers[q.id] === q.answer) {
+                    feedbackEl.innerHTML = "✔";
+                    feedbackEl.className = "feedback-icon correct";
+                    earnedScore++;
+                } else {
+                    // Nếu để trống hoặc sai đều báo đỏ và hiện đáp án
+                    feedbackEl.innerHTML = `✘ (Đáp án: ${q.answer})`;
+                    feedbackEl.className = "feedback-icon incorrect";
+                }
+            });
+
+            // Cập nhật điểm và trạng thái
+            scorePerTopic[currentIndex] = earnedScore;
+            updateTotalScore();
+            isTopicChecked[currentIndex] = true;
+
+            if (earnedScore === topic.questions.length) {
+                topicStatus[currentIndex] = 'perfect'; // Đúng hết -> Xanh
+            } else {
+                topicStatus[currentIndex] = 'needs-review'; // Sai/thiếu -> Đỏ
+            }
+
+            updateUI(); // Cập nhật lại giao diện ngay lập tức
+
+            // Tự động nhảy sang câu tiếp theo sau 0.35s
+            setTimeout(() => {
+                if (currentIndex < quizData.length - 1) {
+                    changePage(1);
+                }
+            }, 350);
+        }
+
+        // Vẽ lại tick xanh đỏ khi user quay lại trang đã làm
+        function reRenderFeedback(topic) {
+            topic.questions.forEach(q => {
+                const feedbackEl = document.getElementById(`feedback_${q.id}`);
+                if (userAnswers[q.id] === q.answer) {
+                    feedbackEl.innerHTML = "✔";
+                    feedbackEl.className = "feedback-icon correct";
+                } else {
+                    feedbackEl.innerHTML = `✘ (Đáp án: ${q.answer})`;
+                    feedbackEl.className = "feedback-icon incorrect";
+                }
+            });
+        }
+
+        // Hàm Làm lại chủ đề
+        function resetCurrentTopic() {
+            const topic = quizData[currentIndex];
+            
+            // Xóa đáp án cũ
+            topic.questions.forEach(q => {
+                userAnswers[q.id] = ""; 
+            });
+
+            // Reset trạng thái & điểm
+            isTopicChecked[currentIndex] = false;
+            topicStatus[currentIndex] = 'unattempted';
+            scorePerTopic[currentIndex] = 0;
+            
+            updateTotalScore();
+            updateUI(); // Render lại giao diện
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
