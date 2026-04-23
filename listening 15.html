@@ -387,10 +387,10 @@
                 `;
             });
 
-            // Nếu đã check, hiện nút LÀM LẠI. Nếu chưa, hiện nút KIỂM TRA.
+            // Nếu đã check, hiện nút Eeset. Nếu chưa, hiện nút KIỂM TRA.
             if (isTopicChecked[currentIndex]) {
                 cardHTML += `
-                    <button class="btn-check btn-retry" onclick="resetCurrentTopic()">Làm lại chủ đề này</button>
+                    <button class="btn-check btn-retry" onclick="resetCurrentTopic()">Reset</button>
                     <div id="exp_${topic.id}" class="explanation" style="display:block">
                         <h4>Mẹo nhớ / Giải thích:</h4>
                         ${topic.explanation}
@@ -398,7 +398,7 @@
                 </div>`;
             } else {
                 cardHTML += `
-                    <button class="btn-check" id="check-btn-${topic.id}" onclick="checkCurrentTopic()">Nộp bài & Kiểm tra</button>
+                    <button class="btn-check" id="check-btn-${topic.id}" onclick="checkCurrentTopic()">Nộp & Kiểm tra</button>
                     <div id="exp_${topic.id}" class="explanation" style="display:none">
                         <h4>Mẹo nhớ / Giải thích:</h4>
                         ${topic.explanation}
