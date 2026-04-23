@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz L (16-17) - Full 23 Chủ Đề</title>
+    <style>
+* {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #2b204e;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Phần Chủ đề trên cùng */
+        .header-status {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .status-text {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #ffffff;
+        }
+
+        /* Thanh chọn số câu */
+        .top-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        .nav-num {
+            background-color: #42326b;
+            color: #ffffff;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            width: 38px;
+            height: 38px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-num:hover {
+            background-color: #534082;
+        }
+        .nav-num.active {
+            border-color: #ffa000;
+            background-color: #534082;
+        }
+        .nav-num.completed {
+            background-color: #2e7d32;
+        }
+
+        /* Dòng cảnh báo đỏ */
+        .warning-text {
+            text-align: center;
+            color: #ff5252;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            background-color: rgba(255, 82, 82, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px dashed #ff5252;
+        }
+
+        /* 2 Nút điều hướng */
+        .nav-buttons-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+        .control-btn {
+            background-color: #42326b;
+            color: #ffffff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.2s;
+            flex: 1; /* Để 2 nút dài đều nhau */
+            max-width: 200px;
+        }
+        .control-btn:hover:not(:disabled) {
+            background-color: #534082;
+        }
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Điểm số (Đưa xuống dưới cùng phần header) */
+        .score-display {
+            text-align: center;
+            color: #ffa000;
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            background-color: #372a5e;
+            padding: 25px;
+            border-radius: 10px;
+        }
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .meo-container {
+            margin-bottom: 20px;
+        }
+        .btn-toggle-meo {
+            background-color: #1e1538;
+            color: #ffa000;
+            border: 1px solid #ffa000;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .btn-toggle-meo:hover {
+            background-color: #ffa000;
+            color: #1e1538;
+        }
+        .meo-box {
+            background-color: #1e1538;
+            border-left: 4px solid #ffa000;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 1rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option-btn {
+            background-color: #42326b;
+            border: 2px solid transparent;
+            color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .option-btn:hover {
+            background-color: #534082;
+        }
+        .option-btn.selected {
+            border-color: #4caf50;
+            background-color: #2e7d32;
+        }
+        .order-badge {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #ffa000;
+            color: #fff;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .feedback {
+            margin-top: 15px;
+            min-height: 24px;
+            font-weight: bold;
+            color: #ff5252;
+            text-align: center;
+        }
+        .feedback.success {
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div class="header-status">
+            <div class="status-text" id="statusText">Chủ đề 1 / 23</div>
+        </div>
+
+        <div class="top-nav" id="topNav"></div>
+
+        <div class="warning-text">
+            Bắt buộc phải click vào 2 đáp án theo ĐÚNG thứ tự xuất hiện trong mẹo
+        </div>
+
+        <div class="nav-buttons-bottom">
+            <button class="control-btn" id="btnPrev" onclick="changeTopic(-1)">← Câu trước</button>
+            <button class="control-btn" id="btnNext" onclick="changeTopic(1)">Câu tiếp theo →</button>
+        </div>
+
+        <div class="score-display" id="scoreDisplay">Điểm: 0 / 92</div>
+
+        <div class="main-content">
+            <div class="question-title" id="qTitle">Đang tải câu hỏi...</div>
+            
+            <div class="meo-container">
+                <button class="btn-toggle-meo" id="btnToggleMeo" onclick="toggleMeo()">👁️ Hiện mẹo nhớ</button>
+                <div class="meo-box" id="qMeoBox">
+                    <strong>Mẹo ghi nhớ:</strong> <span id="qMeo"></span>
+                </div>
+            </div>
+
+            <div class="options" id="qOptions"></div>
+            <div class="feedback" id="qFeedback"></div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                title: "1. Topic: A Writer's New Novel (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. He should follow the same formula as his previous works.",
+                    "2. He should listen to critics before writing his next work.",
+                    "3. It was written in collaboration with another author.",
+                    "4. It is differentfrom his earlier works."
+                ],
+                meo: "Tiểu thuyết mới (new novel) khác biệt (different) nên bị nhận nhiều chỉ trích (critics)",
+                correctOrder: [3, 1] 
+            },
+            {
+                title: "2. Topic: Critism on a new novel (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. It receives positive feedback from critics.",
+                    "2. Establish author popularity.",
+                    "3. It closely follows the same themes as many previous novels.",
+                    "4. The character is interesting."
+                ],
+                meo: "Tiểu thuyết mới (new novel) thì có nhân vật (character) thú vị nên tạo ra (establish) sự nổi tiếng cho tác giả",
+                correctOrder: [3, 1]
+            },
+            {
+                title: "3. Topic: Working from home (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. It is generally a trend that will continue in the future.",
+                    "2. Not good as expected.",
+                    "3. It depends on your situation and personality.",
+                    "4. It is less distracting than working in the office."
+                ],
+                meo: "Làm việc ở nhà (working from home) không tốt như cô ấy tưởng (expected), cô thấy phải tùy vào từng tình huống (situation) mới tốt",
+                correctOrder: [1, 2]
+            },
+            {
+                title: "4. Topic: Life after university (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. More flexible and open-minded.",
+                    "2. Sticking strictly to your original career plan.",
+                    "3. More competitive.",
+                    "4. Less demanding and easier to navigate."
+                ],
+                meo: "Cuộc sống sau đại học (life after university) thì linh động (flexible) nhưng cạnh tranh (competitive).",
+                correctOrder: [0, 2]
+            },
+            {
+                title: "5. Topic: Sport competition in school (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. They distract students from their studies.",
+                    "2. They can cause harmful effects.",
+                    "3. Provides them with a balance in their lives.",
+                    "4. They have no impact on student's future careers."
+                ],
+                meo: "Thể thao tại trường (sport in schools) có thể gây ảnh hưởng có hại (harmful effects) tới sự cân bằng (balance) học tập.",
+                correctOrder: [1, 2]
+            },
+            {
+                title: "6. Topic: Personal finances (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. Get advice from someone they know who is experienced.",
+                    "2. Invest in stocks following advice of brokers.",
+                    "3. Limit expenditures and always have a budget for emergency.",
+                    "4. Organise their resources more effectively."
+                ],
+                meo: "Tài chính cá nhân (personal finances) để có nhiều tài nguyên (resources) thì cần xin lời khuyên (get advice).",
+                correctOrder: [3, 0]
+            },
+            {
+                title: "7. Topic: TV Series (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. The quality is consistent.",
+                    "2. It caught the audience’s attention from the start.",
+                    "3. Series are damaged by overexposure.",
+                    "4. The series is streamed all day, even at night and early in the morning."
+                ],
+                meo: "Phim truyền hình (TV series) thu hút sự chú ý (attention) của khán giả thì sẽ bùng nổ (gần nghĩa - overexposure)",
+                correctOrder: [1, 2]
+            },
+            {
+                title: "8. Topic: Promotion campaign (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. It isn't as attractive as expected.",
+                    "2. It is too similar to many existing products.",
+                    "3. It makes exaggerated claims.",
+                    "4. It may result in budget overruns."
+                ],
+                meo: "Quảng cáo (promotion) bị phóng đại (exaggerated), ko đúng vs công dụng hiện có của sản phẩm (products)",
+                correctOrder: [2, 1]
+            },
+            {
+                title: "9. Topic: A new guide book (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. It follows a standard format.",
+                    "2. It is exclusively for experts in the field.",
+                    "3. It is suitable for particular generation.",
+                    "4. It creates an adventure."
+                ],
+                meo: "Hướng dẫn mới (new guide) có nhiều thử thách (adventure) và phù hợp cho thế hệ trẻ (suitable for particular generation).",
+                correctOrder: [3, 2]
+            },
+            {
+                title: "10. Topic: Setting goals / Making plans (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. It limits your ability to adapt to new situations.",
+                    "2. It allows you to be more flexible.",
+                    "3. It requires you to set certain limits.",
+                    "4. It forces you to stick rigidly to a plan."
+                ],
+                meo: "Lập mục tiêu (set up goals) thì cần linh hoạt (flexible) và có giới hạn (limits).",
+                correctOrder: [1, 2]
+            },
+            {
+                title: "11. Topic: New series (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. The new industry demand is negatively influencing script production.",
+                    "2. They benefit from constant media coverage.",
+                    "3. The dialogues seem unrealistic.",
+                    "4. The storyline was predictable."
+                ],
+                meo: "New series thì làm hội thoại (dialouges) theo kịch bản (script).",
+                correctOrder: [2, 0]
+            },
+            {
+                title: "12. Topic: A musician's life (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. He is completely satisfied with his achievements.",
+                    "2. He could have been more successful.",
+                    "3. He will retire from singing professionally.",
+                    "4. He plans to release another album next year."
+                ],
+                meo: "Cuộc đời của một nhạc sĩ (musician life) sau khi nghỉ hưu (retired) thì không mấy thành công (successful).",
+                correctOrder: [2, 1]
+            },
+            {
+                title: "13. Topic: A break from studying (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. He had already completed all required courses.",
+                    "2. He learns advanced academic skills.",
+                    "3. How to be more independent.",
+                    "4. He wasn't ready to start higher education."
+                ],
+                meo: "Sau khi nghỉ học (break from studying) thì tôi đi học cao học (higher education) vì chưa muốn tự lập (independent)",
+                correctOrder: [3, 2]
+            },
+            {
+                title: "14. Topic: Restaurant (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. The restaurant should make the customers feel valued and welcomed.",
+                    "2. Lower their prices significantly to attract newcomers.",
+                    "3. The standard of services was not good.",
+                    "4. The service is exceptional."
+                ],
+                meo: "Nhà hàng (restaurant) thì có dịch vụ (service) và giá trị (valued) tốt.",
+                correctOrder: [3, 0]
+            },
+            {
+                title: "15. Topic: Security Cameras (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. People should demand their immediate removal.",
+                    "2. People should feel reassured about their presence.",
+                    "3. People often ignore them entirely.",
+                    "4. People are unnecessarily worried about them."
+                ],
+                meo: "Camera giám sát (security camera) bị hỏng làm mọi người lo lắng không cần thiết (unnecessarily worried) và cần được trấn an (reassured).",
+                correctOrder: [3, 1]
+            },
+            {
+                title: "16. Topic: Writer's block (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. Refuse to seek advice of others.",
+                    "2. Create dedicated periods for writing.",
+                    "3. Experiment with different writing styles.",
+                    "4. Wait for inspiration to strike."
+                ],
+                meo: "Block chu kì (period) và xin lời khuyên (seek advice).",
+                correctOrder: [1, 0]
+            },
+            {
+                title: "17. Topic: Professionalism (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. To maintain positive attitude.",
+                    "2. To prioritize personal goals over team objectives.",
+                    "3. Our definition of it is changing.",
+                    "4. It has remained the same for decades."
+                ],
+                meo: "Sự chuyên nghiệp (professionalism) thể hiện qua thái độ tích cực (positive attitude) và sự thay đổi (changing) liên tục.",
+                correctOrder: [0, 2]
+            },
+            {
+                title: "18. Topic: The importance of sleep (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. Avoiding all physical activity before bed.",
+                    "2. Blocking noise and light is the key.",
+                    "3. The media overemphasize the subject.",
+                    "4. People generally underestimate the value of sleep."
+                ],
+                meo: "Để ngủ (sleep) chỉ đơn giản là không nên có ánh sáng (light) và tiếng ồn (noise) nhưng lại bị trầm trọng hoá (overemphasize).",
+                correctOrder: [1, 2]
+            },
+            {
+                title: "19. Topic: Regional Development Planning (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. It is likely to meet resistance from local communities.",
+                    "2. It requires too much budget to implement.",
+                    "3. It doesn't provide enough alternatives to driving.",
+                    "4. It could lead to increased pollution."
+                ],
+                meo: "Phát triển vùng (regional development) bằng cách cấm lái ô tô (driving) thì khó gặp (meet) bạn.",
+                correctOrder: [2, 0]
+            },
+            {
+                title: "20. Topic: Two Writers (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. They have received numerous awards for their work.",
+                    "2. They both have something to say about modern society.",
+                    "3. Their style is immediately recognizable.",
+                    "4. The meaning of their work is not always easy to be identified."
+                ],
+                meo: "Hai Nhà văn (Two writers) trong xã hội hiện đại (modern society) rất khó để nhận dạng (identified)",
+                correctOrder: [1, 3]
+            },
+            {
+                title: "21. Topic: Research about happiness (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. It has not been accurately reported by the media.",
+                    "2. They can easily define what happiness means for everyone.",
+                    "3. Unlikely to find a conclusive answer.",
+                    "4. It is always presented in a neutral and unbiased manner."
+                ],
+                meo: "Nghiên cứu về sự hạnh phúc (happiness) được quảng bá trên truyền thông (media) nhưng chưa tìm được đáp án trả lời (answer).",
+                correctOrder: [0, 2]
+            },
+            {
+                title: "22. Topic: Advertising (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. It helps to reach new customers.",
+                    "2. It always enhances the sport's image.",
+                    "3. The impact on the sport's reputation is somehow limited.",
+                    "4. They are not always good for fans."
+                ],
+                meo: "Quảng cáo (advertising) về sản phẩm mới (new) thường không tốt cho fans (not good for fans).",
+                correctOrder: [0, 3]
+            },
+            {
+                title: "23. Topic: Life of scientist (Chỉ được chọn 2 đáp án đúng)",
+                options: [
+                    "1. The writing style is monotonous.",
+                    "2. It focuses exclusively on scientific jargon.",
+                    "3. The way of writing is exciting to read.",
+                    "4. It has been written for a general audience."
+                ],
+                meo: "Cuộc sống của một nhà khoa học (life of a scientist) thì thú vị (exciting) và có nhiều khán giả (audience).",
+                correctOrder: [2, 3]
+            }
+        ];
+
+        let currentTopic = 0;
+        let score = 0;
+        const totalPoints = quizData.length * 4; 
+        let userAnswers = {};
+
+        const topNav = document.getElementById('topNav');
+        const qTitle = document.getElementById('qTitle');
+        const qMeo = document.getElementById('qMeo');
+        const qOptions = document.getElementById('qOptions');
+        const qFeedback = document.getElementById('qFeedback');
+        const statusText = document.getElementById('statusText');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        
+        const qMeoBox = document.getElementById('qMeoBox');
+        const btnToggleMeo = document.getElementById('btnToggleMeo');
+
+        function init() {
+            for (let i = 0; i < quizData.length; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'nav-num';
+                btn.id = `navBtn-${i}`;
+                btn.innerText = i + 1;
+                btn.onclick = () => jumpToTopic(i);
+                topNav.appendChild(btn);
+                userAnswers[i] = []; 
+            }
+            renderTopic();
+        }
+
+        function toggleMeo() {
+            if (qMeoBox.style.display === 'none' || qMeoBox.style.display === '') {
+                qMeoBox.style.display = 'block';
+                btnToggleMeo.innerText = 'Ẩn mẹo nhớ';
+            } else {
+                qMeoBox.style.display = 'none';
+                btnToggleMeo.innerText = '👁️ Hiện mẹo nhớ';
+            }
+        }
+
+        function renderTopic() {
+            const data = quizData[currentTopic];
+            qTitle.innerText = data.title;
+            qMeo.innerHTML = data.meo;
+            qFeedback.innerText = '';
+            qFeedback.className = 'feedback';
+            
+            qMeoBox.style.display = 'none';
+            btnToggleMeo.innerText = '👁️ Hiện mẹo nhớ';
+            
+            qOptions.innerHTML = '';
+            
+            data.options.forEach((optText, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = optText;
+                
+                const ansArray = userAnswers[currentTopic];
+                const orderIndex = ansArray.indexOf(index);
+                if (orderIndex !== -1) {
+                    btn.classList.add('selected');
+                    const badge = document.createElement('div');
+                    badge.className = 'order-badge';
+                    badge.innerText = orderIndex + 1;
+                    btn.appendChild(badge);
+                }
+
+                btn.onclick = () => handleOptionClick(index);
+                qOptions.appendChild(btn);
+            });
+
+            updateUI();
+        }
+
+        function handleOptionClick(selectedIndex) {
+            const data = quizData[currentTopic];
+            let ansArray = userAnswers[currentTopic];
+
+            if (ansArray.length === 2) return;
+
+            if (ansArray.includes(selectedIndex)) {
+                ansArray.pop(); 
+                renderTopic();
+                return;
+            }
+
+            const step = ansArray.length; 
+            if (selectedIndex === data.correctOrder[step]) {
+                ansArray.push(selectedIndex);
+                
+                if (ansArray.length === 2) {
+                    qFeedback.innerText = "Chính xác! Đang tự động chuyển câu...";
+                    qFeedback.className = 'feedback success';
+                    document.getElementById(`navBtn-${currentTopic}`).classList.add('completed');
+                    score += 4; 
+                    
+                    renderTopic();
+                    
+                    setTimeout(() => {
+                        if (currentTopic < quizData.length - 1) {
+                            changeTopic(1);
+                        } else {
+                            qFeedback.innerText = "Đúng hết r, C1 trong tay :>.";
+                        }
+                    }, 350);
+                    return; 
+                } else {
+                    qFeedback.innerText = "Tốt! Hãy chọn tiếp đáp án cho từ khóa thứ hai.";
+                    qFeedback.className = 'feedback success';
+                }
+            } else {
+                qFeedback.innerText = `Sai ! Cần chọn đáp án khớp với từ khóa thứ ${step + 1} trong mẹo.`;
+                qFeedback.className = 'feedback';
+                
+                const buttons = qOptions.getElementsByClassName('option-btn');
+                buttons[selectedIndex].style.backgroundColor = '#ff5252';
+                setTimeout(() => {
+                    buttons[selectedIndex].style.backgroundColor = '';
+                }, 500);
+                return;
+            }
+
+            renderTopic();
+        }
+
+        function updateUI() {
+            for (let i = 0; i < quizData.length; i++) {
+                const btn = document.getElementById(`navBtn-${i}`);
+                if (i === currentTopic) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            }
+
+            statusText.innerText = `CHỦ ĐỀ ${currentTopic + 1} / ${quizData.length}`;
+            scoreDisplay.innerText = `Điểm: ${score} / ${totalPoints}`;
+            btnPrev.disabled = currentTopic === 0;
+            btnNext.disabled = currentTopic === quizData.length - 1;
+        }
+
+        function changeTopic(direction) {
+            const newTopic = currentTopic + direction;
+            if (newTopic >= 0 && newTopic < quizData.length) {
+                currentTopic = newTopic;
+                renderTopic();
+            }
+        }
+
+        function jumpToTopic(index) {
+            currentTopic = index;
+            renderTopic();
+        }
+
+        init();
+    </script>
+</body>
+</html>
